@@ -36,7 +36,7 @@ public class EDItoXML {
         generatedOutput = outputWriter;
     }
 
-    /**
+    /** 
      * Main processing method for the EDItoXML object
      */
     public void run() {
@@ -177,8 +177,8 @@ public class EDItoXML {
                 return "EDItoXML [inputfile] [-o outputfile] [-n true|false] [-r true|false]";
             }
         };
-        String inputFileName = "C:\\Users\\user\\workspace3\\edi\\src\\DESADV.edi";
-        String outputFileName = "C:\\Users\\user\\workspace3\\edi\\src\\DESADV.xml";
+        String inputFileName = "src\\DESADV.edi";
+        String outputFileName = "src\\DESADV.xml";
         boolean namespaceEnabled = "true".equals(commandLine.getOption("n"));
         boolean recover = "true".equals(commandLine.getOption("r"));
 

@@ -21,7 +21,7 @@ public class DOMEcho {
     private static PrintStream out;
     private static NodeList mappingSegments;
     private static List<String> requiredSegments= new ArrayList<String>() ;
-    private static String[] segsWithoutQualifiant= {"ALI","EQD","CPS","PAC","LIN"};
+    private static String[] segsWithoutQualifiant= {"ALI","EQD","CPS","PAC","LIN","IMD"};
     private static String[] notUniqueSegs= {"DTM","NAD","RFF","QTY","MEA"};
     private static String[] arrayReqSegs= {"BGM+351","DTM+132","DTM+137","DTM+11","NAD+CN","NAD+CZ","NAD+SE","LOC+11","RFF+ADE","CPS","PAC","QTY+52","PCI+17","RFF+AAT","GIR+3","LIN","PIA+1","QTY+12","ALI","RFF+ON"};
     private static String[] desadvSegs= {"BGM","DTM","NAD","LOC","CPS","PAC","QTY","PCI","RFF","GIR","ALI","EQD","MEA","PIA","IMD","LIN"};
@@ -71,7 +71,7 @@ public class DOMEcho {
         dbf.setCoalescing(putCDATAIntoText);
         dbf.setExpandEntityReferences(!createEntityRefs);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(new File("src\\DESADV.xml"));
+        Document doc = db.parse(new File("src\\scanDBQueryDetail.xml"));
         Document ediMapping = db.parse(new File("src\\base.xml"));
         // end reading xml file
         
@@ -249,39 +249,27 @@ public class DOMEcho {
 			
 			switch(actualSeg+"+"+SegQualifiant){
 			case "QTY+52":
-				if((getSegRepetitivity("QTY+52")) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PCI+17"))))
-					throw new Exception("QTY+52 seg de plus !!!");
+			case "MEA+AAY":
+				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PAC"))))
+					throw new Exception(actualSeg+"+"+SegQualifiant+" seg de plus !!!");
 				break;
 			case "RFF+AAT":
-				if((getSegRepetitivity("RFF+AAT")) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PCI+17"))))
-					throw new Exception("RFF+AAT seg de plus !!!");
+			case "GIR+3":
+				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PCI+17"))))
+					throw new Exception(actualSeg+"+"+SegQualifiant+" seg de plus !!!");
 				break;
 			case "PIA+1":
-				if((getSegRepetitivity("PIA+1")) > (Integer.parseInt(repetivity)*(getSegRepetitivity("LIN"))))
-					throw new Exception("PIA+1 seg de plus !!!");
-				break;
-
-			case "MEA+AAY":
-				if((getSegRepetitivity("MEA+AAY")) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PAC"))))
-					throw new Exception("MEA+AAY seg de plus !!!");
-				break;
-			
-			case "QTY+12":
-				if((getSegRepetitivity("QTY+12")) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PAC"))))
-					throw new Exception("QTY+12 seg de plus !!!");
-				break;
-				
-			case "RFF+ON":
-				if((getSegRepetitivity("RFF+ON")) > (Integer.parseInt(repetivity)*(getSegRepetitivity("LIN"))))
-					throw new Exception("RFF+ON seg de plus !!!");
-				break;
-				
 			case "LOC+159":
-				if((getSegRepetitivity("LOC+159")) > (Integer.parseInt(repetivity)*(getSegRepetitivity("LIN"))))
-					throw new Exception("LOC+159 seg de plus !!!");
+			case "RFF+ON":
+			case "QTY+12":
+			case "ALI":
+			case "IMD":
+				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("LIN"))))
+					throw new Exception(actualSeg+"+"+SegQualifiant+" seg de plus !!!");
 				break;
 				
 			default:
+				System.out.println(actualSeg+"+"+SegQualifiant+" repetitivity:"+getSegRepetitivity(actualSeg+"+"+SegQualifiant));
 				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant))>Integer.parseInt(repetivity))
 					throw new Exception(actualSeg+"+"+SegQualifiant+" seg de plus ");
 			

@@ -37,7 +37,7 @@ public class edi {
 	private JButton btnNewButton_1 = new JButton("Lancer la vérification");
 	private String result = "<html>";
 
-	/**
+	/** 
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
