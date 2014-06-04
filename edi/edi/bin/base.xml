@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ediroot>
+<interchange Decimal="." AckRequest="0" Control="3303578" Time="1428" Date="140803" SyntaxVersion="3" SyntaxId="UNOA" Standard="EDIFACT">
+<sender>
+<address Qual="ZZ" Id="CEVATECH08"/>
+</sender>
+<receiver>
+<address Qual="" Id="1780129987"/>
+</receiver>
+
+<group>
+<transaction Control="206890" Association="A01052" Agency="UN" Release="96A" Version="D" DocType="DESADV">
+
+<segment Id="BGM" required="1" repetivity="1">
+<element Id="BGM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">351</subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">10</subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="BGM02" required="1" length="7" format="an"></element>
+<element Id="BGM03" required="0" length="3" format="an"></element>
+<element Id="BGM04" required="0" length="3" format="an"></element>
+</segment>
+
+<segment Id="DTM" required="1" repetivity="1">
+<element Id="DTM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">132</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">203</subelement>
+</element>
+</segment>
+
+
+<segment Id="DTM" required="1" repetivity="1">
+<element Id="DTM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">137</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">203</subelement>
+</element>
+</segment>
+
+
+<segment Id="DTM" required="0" repetivity="1">
+<element Id="DTM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">11</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">203</subelement>
+</element>
+</segment>
+
+
+<segment Id="ALI" required="0" repetivity="1">
+<element Id="ALI01" required="0" length="3" format="an"></element>
+<element Id="ALI02" required="0" length="3" format="an"></element>
+<element Id="ALI03" required="0" length="3" format="an"></element>
+<element Id="ALI04" required="0" length="3" format="an"></element>
+<element Id="ALI05" required="0" length="3" format="an"></element>
+<element Id="ALI06" required="0" length="3" format="an"></element>
+<element Id="ALI07" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="MEA" required="0" repetivity="1">
+<element Id="MEA01" required="1" length="3" format="an">AAX</element>
+<element Id="MEA02" Composite="yes">
+<subelement Sequence="1" required="0" length="3" format="an">AAD</subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="70" format="an"></subelement>
+</element>
+<element Id="MEA03" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">KGM</subelement>
+<subelement Sequence="2" required="0" length="18" format="an"></subelement>
+<subelement Sequence="1" required="0" length="18" format="an"></subelement>
+<subelement Sequence="2" required="0" length="18" format="an"></subelement>
+<subelement Sequence="1" required="0" length="2" format="an"></subelement>
+</element>
+<element Id="MEA04" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="RFF">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1">CRN</subelement>
+<subelement Sequence="2">R080220001</subelement>
+</element>
+</segment>
+
+
+<segment Id="NAD">
+<element Id="NAD01">SE</element>
+<element Id="NAD02" Composite="yes">
+<subelement Sequence="1">2409196821</subelement>
+<subelement Sequence="3">10</subelement>
+</element>
+
+<element Id="NAD03" Composite="yes">
+<subelement Sequence="1">26BIS RUE JOLIOT CURIE</subelement>
+<subelement Sequence="4">08440 VIVIER AU COURT</subelement>
+</element>
+<element Id="NAD04">SOCIETE CEVA</element>
+<element Id="NAD09">FR</element>
+</segment>
+
+
+<segment Id="RFF">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1">ADE</subelement>
+<subelement Sequence="2">00220667</subelement>
+</element>
+</segment>
+
+
+<segment Id="NAD">
+<element Id="NAD01">CZ</element>
+<element Id="NAD02" Composite="yes">
+<subelement Sequence="1">0022066706</subelement>
+<subelement Sequence="3">92</subelement>
+</element>
+<element Id="NAD03" Composite="yes">
+<subelement Sequence="1">26bis RUE JOLIOT CURIE</subelement>
+<subelement Sequence="4">FR-08440 VIVIER AU COURT</subelement>
+</element>
+<element Id="NAD04">CEVA - PLASTURGIE</element>
+<element Id="NAD09">FR</element>
+</segment>
+
+
+<segment Id="NAD">
+<element Id="NAD01">CN</element>
+<element Id="NAD02" Composite="yes">
+<subelement Sequence="1">09317801299871124</subelement>
+<subelement Sequence="3">10</subelement>
+</element>
+<element Id="NAD03" Composite="yes">
+<subelement Sequence="1">191GRG</subelement>
+<subelement Sequence="4">FR-59500 DOUAI</subelement>
+</element>
+<element Id="NAD04">RENAULT DOUAI</element>
+</segment>
+<segment Id="LOC">
+<element Id="LOC01">11</element>
+<element Id="LOC02">191GRG</element>
+</segment>
+<segment Id="NAD">
+<element Id="NAD01">CZ</element>
+<element Id="NAD02" Composite="yes">
+<subelement Sequence="1">0022066706</subelement>
+<subelement Sequence="3">92</subelement>
+</element>
+<element Id="NAD03" Composite="yes">
+<subelement Sequence="1">26bis RUE JOLIOT CURIE</subelement>
+<subelement Sequence="4">FR-08440 VIVIER AU COURT</subelement>
+</element>
+<element Id="NAD04">CEVA - PLASTURGIE</element>
+<element Id="NAD09">FR</element>
+</segment>
+
+
+<segment Id="EQD">
+<element Id="EQD01">TE</element>
+<element Id="EQD02">157AWG51</element>
+</segment>
+
+
+<segment Id="CPS">
+<element Id="CPS01">1</element>
+<element Id="CPS03">1</element>
+</segment>
+
+
+<segment Id="PAC">
+<element Id="PAC01">2</element>
+
+
+<element Id="PAC03" Composite="yes">
+<subelement Sequence="1">BAC-O-6433</subelement>
+<subelement Sequence="3">92</subelement>
+</element>
+</segment>
+
+
+<segment Id="QTY">
+<element Id="QTY01" Composite="yes">
+<subelement Sequence="1">52</subelement>
+<subelement Sequence="2">21</subelement>
+<subelement Sequence="3">PCE</subelement>
+</element>
+</segment>
+
+
+<segment Id="PCI">
+<element Id="PCI01">17</element>
+</segment>
+
+
+<segment Id="RFF">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1">AAT</subelement>
+<subelement Sequence="2">0100657448</subelement>
+</element>
+</segment>
+
+
+<segment Id="GIR">
+<element Id="GIR01">3</element>
+<element Id="GIR02" Composite="yes">
+<subelement Sequence="1">0100657443</subelement>
+<subelement Sequence="2">ML</subelement>
+</element>
+<element Id="GIR03" Composite="yes">
+<subelement Sequence="1">LR0T6C9O</subelement>
+<subelement Sequence="2">BU</subelement>
+</element>
+</segment>
+
+
+<segment Id="LIN">
+<element Id="LIN03" Composite="yes">
+<subelement Sequence="1">765M54577R</subelement>
+<subelement Sequence="2">IN</subelement>
+</element>
+<element Id="LIN05">0</element>
+</segment>
+
+
+<segment Id="PIA">
+<element Id="PIA01">1</element>
+<element Id="PIA02" Composite="yes">
+<subelement Sequence="1">967.837</subelement>
+<subelement Sequence="2">SA</subelement>
+</element>
+</segment>
+
+
+<segment Id="IMD">
+<element Id="IMD03" Composite="yes">
+<subelement Sequence="4">Z7-RAIDISSEUR RENFOR</subelement>
+</element>
+</segment>
+
+
+<segment Id="MEA">
+<element Id="MEA01">AAY</element>
+<element Id="MEA02">AAL</element>
+<element Id="MEA03" Composite="yes">
+<subelement Sequence="1">KGM</subelement>
+<subelement Sequence="2">213.500</subelement>
+</element>
+</segment>
+
+
+<segment Id="QTY">
+<element Id="QTY01" Composite="yes">
+<subelement Sequence="1">12</subelement>
+<subelement Sequence="2">42</subelement>
+<subelement Sequence="3">PCE</subelement>
+</element>
+</segment>
+
+
+<segment Id="ALI">
+<element Id="ALI01">FR</element>
+</segment>
+
+
+<segment Id="RFF">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1">ON</subelement>
+<subelement Sequence="2">527802</subelement>
+</element>
+</segment>
+
+
+<segment Id="LOC">
+<element Id="LOC01">159</element>
+<element Id="LOC02" Composite="yes">
+<subelement Sequence="4">MAPU</subelement>
+</element>
+</segment>
+
+
+<segment Id="CPS">
+<element Id="CPS01">2</element>
+<element Id="CPS03">1</element>
+</segment>
+
+
+<segment Id="PAC">
+<element Id="PAC01">2</element>
+<element Id="PAC03" Composite="yes">
+<subelement Sequence="1">BAC-O-6433</subelement>
+<subelement Sequence="3">92</subelement>
+</element>
+</segment>
+
+
+<segment Id="QTY">
+<element Id="QTY01" Composite="yes">
+<subelement Sequence="1">52</subelement>
+<subelement Sequence="2">21</subelement>
+<subelement Sequence="3">PCE</subelement>
+</element>
+</segment>
+
+<segment Id="PCI">
+<element Id="PCI01">17</element>
+</segment>
+
+<segment Id="RFF">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1">AAT</subelement>
+<subelement Sequence="2">0100657449</subelement>
+</element>
+</segment>
+
+<segment Id="GIR">
+<element Id="GIR01">3</element>
+<element Id="GIR02" Composite="yes">
+<subelement Sequence="1">0100657445</subelement>
+<subelement Sequence="2">ML</subelement>
+</element>
+</segment>
+
+<segment Id="LIN">
+<element Id="LIN03" Composite="yes">
+<subelement Sequence="1">765M48087R</subelement>
+<subelement Sequence="2">IN</subelement>
+</element>
+<element Id="LIN05">0</element>
+</segment>
+
+<segment Id="PIA">
+<element Id="PIA01">1</element>
+<element Id="PIA02" Composite="yes">
+<subelement Sequence="1">967.838</subelement>
+<subelement Sequence="2">SA</subelement>
+</element>
+</segment>
+
+<segment Id="IMD">
+<element Id="IMD03" Composite="yes">
+<subelement Sequence="4">CC-RAIDISSEUR RENFOR</subelement>
+</element
+</segment>
+
+<segment Id="MEA">
+<element Id="MEA01">AAY</element>
+<element Id="MEA02">AAL</element>
+<element Id="MEA03" Composite="yes">
+<subelement Sequence="1">KGM</subelement>
+<subelement Sequence="2">213.500</subelement>
+</element>
+</segment>
+
+<segment Id="QTY">
+<element Id="QTY01" Composite="yes">
+<subelement Sequence="1">12</subelement>
+<subelement Sequence="2">42</subelement>
+<subelement Sequence="3">PCE</subelement>
+</element>
+</segment>
+
+<segment Id="ALI">
+<element Id="ALI01">FR</element>
+</segment>
+
+<segment Id="RFF">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1">ON</subelement>
+<subelement Sequence="2">527802</subelement>
+</element>
+</segment>
+
+<segment Id="LOC">
+<element Id="LOC01">159</element>
+<element Id="LOC02" Composite="yes">
+<subelement Sequence="4">MAPU</subelement>
+</element>
+</segment>
+
+</transaction>
+</group>
+</interchange>
+</ediroot>

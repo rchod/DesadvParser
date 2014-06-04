@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ediroot>
+
+<segment Id="BGM" required="1" repetivity="1">
+<element Id="BGM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">351</subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">10</subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="BGM02" required="1" length="7" format="an"></element>
+<element Id="BGM03" required="0" length="3" format="an"></element>
+<element Id="BGM04" required="0" length="3" format="an"></element>
+</segment>
+
+<segment Id="DTM" required="1" repetivity="1">
+<element Id="DTM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">132</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">203</subelement>
+</element>
+</segment>
+
+
+<segment Id="DTM" required="1" repetivity="1">
+<element Id="DTM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">137</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">203</subelement>
+</element>
+</segment>
+
+
+<segment Id="DTM" required="0" repetivity="1">
+<element Id="DTM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">11</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">203</subelement>
+</element>
+</segment>
+
+
+<segment Id="ALI" required="0" repetivity="1">
+<element Id="ALI01" required="0" length="3" format="an"></element>
+<element Id="ALI02" required="0" length="3" format="an"></element>
+<element Id="ALI03" required="0" length="3" format="an"></element>
+<element Id="ALI04" required="0" length="3" format="an"></element>
+<element Id="ALI05" required="0" length="3" format="an"></element>
+<element Id="ALI06" required="0" length="3" format="an"></element>
+<element Id="ALI07" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="MEA" required="0" repetivity="1">
+<element Id="MEA01" required="1" length="3" format="an">AAX</element>
+<element Id="MEA02" Composite="yes">
+<subelement Sequence="1" required="0" length="3" format="an">AAD</subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="70" format="an"></subelement>
+</element>
+<element Id="MEA03" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">KGM</subelement>
+<subelement Sequence="2" required="0" length="18" format="an"></subelement>
+<subelement Sequence="3" required="0" length="18" format="an"></subelement>
+<subelement Sequence="4" required="0" length="18" format="an"></subelement>
+<subelement Sequence="5" required="0" length="2" format="an"></subelement>
+</element>
+<element Id="MEA04" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="RFF" required="0" repetivity="1">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">AAS</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="6" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+</segment>
+
+<segment Id="RFF" required="0" repetivity="1">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">CRN</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="6" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+</segment>
+
+
+<segment Id="NAD" required="1" repetivity="1">
+<element Id="NAD01" required="1" length="3" format="an">CN</element>
+<element Id="NAD02" Composite="yes">
+<subelement Sequence="1" required="1" length="20" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="NAD03" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+<subelement Sequence="5" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="NAD04" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+<subelement Sequence="5" required="0" length="35" format="an"></subelement>
+<subelement Sequence="6" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="NAD05" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="NAD06" required="0" length="35" format="an"></element>
+<element Id="NAD07" required="0" length="9" format="an"></element>
+<element Id="NAD08" required="0" length="9" format="an"></element>
+<element Id="NAD09" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="LOC" required="1" repetivity="1">
+<element Id="LOC01" required="1" length="3" format="an">11</element>
+<element Id="LOC02" Composite="yes">
+<subelement Sequence="1" required="0" length="12" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="7" format="an"></subelement>
+</element>
+<element Id="LOC03" Composite="yes">
+<subelement Sequence="1" required="0" length="25" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="70" format="an"></subelement>
+</element>
+<element Id="LOC04" Composite="yes">
+<subelement Sequence="1" required="0" length="25" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="70" format="an"></subelement>
+</element>
+<element Id="LOC05" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="NAD" required="1" repetivity="1">
+<element Id="NAD01" required="1" length="3" format="an">CZ</element>
+<element Id="NAD02" Composite="yes">
+<subelement Sequence="1" required="1" length="10" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">92</subelement>
+</element>
+<element Id="NAD03" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+<subelement Sequence="5" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="NAD04" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+<subelement Sequence="5" required="0" length="35" format="an"></subelement>
+<subelement Sequence="6" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="NAD05" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="NAD06" required="0" length="35" format="an"></element>
+<element Id="NAD07" required="0" length="9" format="an"></element>
+<element Id="NAD08" required="0" length="9" format="an"></element>
+<element Id="NAD09" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="NAD" required="1" repetivity="1">
+<element Id="NAD01" required="1" length="3" format="an">SE</element>
+<element Id="NAD02" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="NAD03" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+<subelement Sequence="5" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="NAD04" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+<subelement Sequence="5" required="0" length="35" format="an"></subelement>
+<subelement Sequence="6" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="NAD05" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="NAD06" required="0" length="35" format="an"></element>
+<element Id="NAD07" required="0" length="9" format="an"></element>
+<element Id="NAD08" required="0" length="9" format="an"></element>
+<element Id="NAD09" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="RFF" required="1" repetivity="1">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">ADE</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="6" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+</segment>
+
+<segment Id="EQD" required="0" repetivity="1">
+<element Id="EQD01" required="1" length="3" format="an">TE</element>
+<element Id="EQD02" Composite="yes">
+<subelement Sequence="1" required="0" length="17" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="EQD03" Composite="yes">
+<subelement Sequence="1" required="0" length="10" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="EQD04" required="0" length="3" format="an"></element>
+<element Id="EQD05" required="0" length="3" format="an"></element>
+<element Id="EQD06" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="CPS" required="1" repetivity="999">
+<element Id="CPS01" required="1" length="12" format="an"></element>
+<element Id="CPS02" required="0" length="12" format="an"></element>
+<element Id="CPS03" required="0" length="3" format="an">1</element>
+</segment>
+
+
+<segment Id="PAC" required="1" repetivity="99">
+<element Id="PAC01" required="1" length="12" format="an"></element>
+<element Id="PAC02" Composite="yes">
+<subelement Sequence="1" required="1" length="12" format="an"></subelement>
+<subelement Sequence="2" required="0" length="12" format="an"></subelement>
+<subelement Sequence="3" required="0" length="12" format="an"></subelement>
+</element>
+<element Id="PAC03" Composite="yes">
+<subelement Sequence="1" required="1" length="12" format="an"></subelement>
+<subelement Sequence="2" required="0" length="12" format="an"></subelement>
+<subelement Sequence="3" required="0" length="12" format="an"></subelement>
+<subelement Sequence="4" required="1" length="12" format="an">92</subelement>
+</element>
+<element Id="PAC04" Composite="yes">
+<subelement Sequence="1" required="1" length="12" format="an"></subelement>
+<subelement Sequence="2" required="0" length="12" format="an"></subelement>
+<subelement Sequence="3" required="0" length="12" format="an"></subelement>
+<subelement Sequence="4" required="0" length="12" format="an"></subelement>
+<subelement Sequence="5" required="0" length="12" format="an"></subelement>
+</element>
+<element Id="PAC05" Composite="yes">
+<subelement Sequence="1" required="1" length="12" format="an"></subelement>
+<subelement Sequence="2" required="0" length="12" format="an"></subelement>
+</element>
+</segment>
+
+
+<segment Id="MEA" required="0" repetivity="1">
+<element Id="MEA01" required="1" length="3" format="an">AAY</element>
+<element Id="MEA02" Composite="yes">
+<subelement Sequence="1" required="0" length="3" format="an">G</subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="70" format="an"></subelement>
+</element>
+<element Id="MEA03" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an"></subelement>
+<subelement Sequence="2" required="0" length="18" format="an"></subelement>
+<subelement Sequence="3" required="0" length="18" format="an"></subelement>
+<subelement Sequence="4" required="0" length="18" format="an"></subelement>
+<subelement Sequence="5" required="0" length="2" format="an"></subelement>
+</element>
+<element Id="MEA04" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="MEA" required="0" repetivity="1">
+<element Id="MEA01" required="1" length="3" format="an">AAY</element>
+<element Id="MEA02" Composite="yes">
+<subelement Sequence="1" required="0" length="3" format="an">AAL</subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="70" format="an"></subelement>
+</element>
+<element Id="MEA03" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an"></subelement>
+<subelement Sequence="2" required="0" length="18" format="an"></subelement>
+<subelement Sequence="3" required="0" length="18" format="an"></subelement>
+<subelement Sequence="4" required="0" length="18" format="an"></subelement>
+<subelement Sequence="5" required="0" length="2" format="an"></subelement>
+</element>
+<element Id="MEA04" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="QTY" required="1" repetivity="1">
+<element Id="QTY01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">52</subelement>
+<subelement Sequence="2" required="1" length="15" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">PCE</subelement>
+</element>
+</segment>
+
+
+<segment Id="PCI" required="1" repetivity="99">
+<element Id="PCI01" required="0" length="3" format="an">17</element>
+<element Id="PCI02" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="35" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+<subelement Sequence="5" required="0" length="35" format="an"></subelement>
+<subelement Sequence="6" required="0" length="35" format="an"></subelement>
+<subelement Sequence="7" required="0" length="35" format="an"></subelement>
+<subelement Sequence="8" required="0" length="35" format="an"></subelement>
+<subelement Sequence="9" required="0" length="35" format="an"></subelement>
+<subelement Sequence="10" required="0" length="35" format="an"></subelement>
+</element>
+<element Id="PCI03" required="0" length="3" format="an">17</element>
+<element Id="PCI04" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">G|M|S</subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+</segment>
+
+
+<segment Id="RFF" required="1" repetivity="1">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">AAT</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="6" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+</segment>
+
+
+<segment Id="DTM" required="0" repetivity="5">
+<element Id="DTM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">94</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">102</subelement>
+</element>
+</segment>
+
+<segment Id="GIR" required="1" repetivity="100">
+<element Id="GIR01" required="1" length="3" format="an">3</element>
+<element Id="GIR02" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an">ML</subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="GIR03" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an">AL</subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="GIR04" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="GIR05" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="GIR06" Composite="yes">
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+</segment>
+
+
+<segment Id="LIN" required="1" repetivity="99">
+<element Id="LIN01" required="0" length="6" format="n"></element>
+<element Id="LIN02" required="0" length="3" format="n"></element>
+<element Id="LIN03" Composite="yes">
+<subelement Sequence="1" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an">IN</subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="LIN04" Composite="yes">
+<subelement Sequence="1" required="0" length="3" format="an"></subelement>
+<subelement Sequence="2" required="0" length="6" format="n"></subelement>
+</element>
+<element Id="LIN05" required="0" length="2" format="n"></element>
+<element Id="LIN06" required="0" length="3" format="n"></element>
+</segment>
+
+
+<segment Id="PIA" required="0" repetivity="1">
+<element Id="PIA01" required="1" length="3" format="an">1</element>
+<element Id="PIA02" Composite="yes">
+<subelement Sequence="1" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="PIA03" Composite="yes">
+<subelement Sequence="1" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an">DR</subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="PIA04" Composite="yes">
+<subelement Sequence="1" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="PIA05" Composite="yes">
+<subelement Sequence="1" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="PIA06" Composite="yes">
+<subelement Sequence="1" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="3" format="an"></subelement>
+</element>
+</segment>
+
+
+<segment Id="IMD" required="1" repetivity="1">
+<element Id="IMD01" required="0" length="3" format="an"></element>
+<element Id="IMD02" required="0" length="3" format="an"></element>
+<element Id="IMD03" Composite="yes">
+<subelement Sequence="1" required="0" length="17" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+<subelement Sequence="5" required="1" length="35" format="an"></subelement>
+<subelement Sequence="6" required="0" length="3" format="an"></subelement>
+</element>
+<element Id="IMD04" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="QTY" required="0" repetivity="1">
+<element Id="QTY01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">1</subelement>
+<subelement Sequence="2" required="1" length="15" format="n"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+</segment>
+
+
+<segment Id="QTY" required="1" repetivity="1">
+<element Id="QTY01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">12</subelement>
+<subelement Sequence="2" required="1" length="15" format="n"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+</element>
+</segment>
+
+
+<segment Id="ALI" required="1" repetivity="10">
+<element Id="ALI01" required="1" length="3" format="an"></element>
+<element Id="ALI02" required="0" length="3" format="an"></element>
+<element Id="ALI03" required="0" length="3" format="an"></element>
+<element Id="ALI04" required="0" length="3" format="an"></element>
+<element Id="ALI05" required="0" length="3" format="an"></element>
+<element Id="ALI06" required="0" length="3" format="an"></element>
+<element Id="ALI07" required="0" length="3" format="an"></element>
+</segment>
+
+
+<segment Id="DTM" required="0" repetivity="1">
+<element Id="DTM01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">102</subelement>
+</element>
+</segment>
+
+
+<segment Id="RFF" required="0" repetivity="1">
+<element Id="RFF01" Composite="yes">
+<subelement Sequence="1" required="1" length="3" format="an">ON</subelement>
+<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="3" required="0" length="6" format="an"></subelement>
+<subelement Sequence="4" required="0" length="35" format="an"></subelement>
+</element>
+</segment>
+
+<segment Id="LOC" required="0" repetivity="1">
+<element Id="LOC01" required="1" length="3" format="an">159</element>
+<element Id="LOC02" Composite="yes">
+<subelement Sequence="1" required="0" length="12" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="4" required="0" length="7" format="an"></subelement>
+</element>
+
+</segment>
+
+</ediroot>
