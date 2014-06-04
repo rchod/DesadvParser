@@ -4,6 +4,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.ObjectInputStream.GetField;
 import java.io.PrintStream;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +12,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 
 
 public class DOMEcho {
@@ -71,7 +74,7 @@ public class DOMEcho {
         dbf.setCoalescing(putCDATAIntoText);
         dbf.setExpandEntityReferences(!createEntityRefs);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(new File("src\\scanDBQueryDetail.xml"));
+        Document doc = db.parse(new File("src\\DESADV.xml"));
         Document ediMapping = db.parse(new File("src\\base.xml"));
         // end reading xml file
         
@@ -191,7 +194,6 @@ public class DOMEcho {
 //	        	 System.out.println(array[0]+"///"+array[1]);
 //	         }
 	         
-	         
 	         //#######################################
 	         for(int j=0;j<segments.getLength();j++){
 	        	 
@@ -199,8 +201,6 @@ public class DOMEcho {
 	        	 
 	         }	
 	         //#######################################
-  
-	         
 
 	         if(requiredSegments.size()>0)
 	        	 throw new Exception("required segments absent:"+ requiredSegments);
@@ -277,20 +277,6 @@ public class DOMEcho {
 			//************ checking repetitivity
 			
 			
-//			//************ checking repetitivity
-//	         for(int k=0;k<repetitivitySegs.size();k++){
-//		       	 String[] array = (String[]) repetitivitySegs.get(k);
-//		       	 System.out.println(array[0]);
-//		       	 if((array[0]).equals("QTY+52")){
-//		       		 System.out.println("QTY+52 reptitivity = "+array[1]);
-//		       		 if(Integer.parseInt(array[1]) > Integer.parseInt(repetivity)*Integer.parseInt(getSegRepetitivity("PCI+17")))
-//		       			throw new Exception("seg de plus");
-//		       	 }else
-//		       		 if(array[0].equals(actualSeg+"+"+SegQualifiant) && (Integer.parseInt(array[1]) > Integer.parseInt(repetivity)))
-//		       		 throw new Exception("segment "+actualSeg+"+"+SegQualifiant+" is repeated "+array[1]+" times! max="+repetivity);
-//		     }
-//			//************ checking repetitivity
-			
 			if(!desadvSegsList.contains(actualSeg))
 				throw new Exception("Segment inconnue: "+actualSeg);
 			
@@ -330,6 +316,33 @@ public class DOMEcho {
 				}
 			}else{ // if element is not composite
 				if(actualElm.equals(actualSeg+"01")){
+					
+					Node mE = null;
+					if(mappingElm.getAttributes().getLength()==2)
+						mE = getMappingSubElm(n.getFirstChild());
+					else mE = mappingElm;
+					
+					System.out.println(n.getAttributes().getLength());
+					System.out.println(mE.getAttributes().getNamedItem("Id"));
+					
+				    String format = mE.getAttributes().getNamedItem("format").getTextContent();
+				    String length = mE.getAttributes().getNamedItem("length").getTextContent();
+				    String required = mE.getAttributes().getNamedItem("required").getTextContent();
+
+				    //************************************
+				    // check format & length requirements
+					if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent()) ){
+						throw new Exception("seg is not Alphanumeric");
+					}
+					
+					if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent()) ){
+						throw new Exception("seg is not numeric");
+					}
+					
+					if(n.getTextContent().length() > Integer.parseInt(length))
+						throw new Exception("seg length exceeds limit");
+					//************************************
+					
 					//System.out.println("Composite????"+);
 					actualElmContent = n.getTextContent();
 				    if(!desadvSegsListP.contains(actualSeg+"+"+SegQualifiant) && !desadvSegsListVar.contains(actualSeg) )
