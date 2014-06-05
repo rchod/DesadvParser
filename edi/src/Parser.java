@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 
 
 
-public class DOMEcho {
+public class Parser {
 
     private static PrintStream out;
     private static NodeList mappingSegments;
@@ -55,7 +55,7 @@ public class DOMEcho {
     private static int lineCounter = 0;
     private static int segCounter = 2;
     
-    DOMEcho(PrintStream out) {
+    Parser(PrintStream out) {
         this.out = out;
     }
 

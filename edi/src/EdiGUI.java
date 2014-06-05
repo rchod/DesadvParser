@@ -29,7 +29,7 @@ import javax.swing.JScrollPane;
 import java.awt.ScrollPane;
 
 
-public class edi {
+public class EdiGUI {
 
 	JFrame frame;
 	private JLabel jlabel;
@@ -50,7 +50,7 @@ public class edi {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					edi window = new edi();
+					EdiGUI window = new EdiGUI();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -62,7 +62,7 @@ public class edi {
 	/**
 	 * Create the application.
 	 */
-	public edi() {
+	public EdiGUI() {
 		initialize();
 
 	}

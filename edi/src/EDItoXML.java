@@ -224,7 +224,7 @@ public class EDItoXML {
         //////////////////////////////////////////////////////
         
         PrintStream out = null;
-		DOMEcho e = new DOMEcho(out);
+		Parser e = new Parser(out);
 	    e.main(args);
         
     }
