@@ -31,7 +31,7 @@ import java.awt.ScrollPane;
 
 public class edi {
 
-	private JFrame frame;
+	JFrame frame;
 	private JLabel jlabel;
 	private JPanel jp1 = new JPanel();
 	private JPanel jp2 = new JPanel();

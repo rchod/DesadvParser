@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-//import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -49,12 +49,18 @@ public class DOMEcho {
     private static String SegQualifiant;
     private static List segs= new ArrayList<String>();
     private static List repetitivitySegs= new ArrayList<String>();
+    private static String dtm132 = null;
+    private static String dtm11  = null;
+    private static String dtm137 = null;
+    private static int lineCounter = 0;
+    private static int segCounter = 2;
     
     DOMEcho(PrintStream out) {
         this.out = out;
     }
 
     public static void main(String[] args) throws Exception {
+    	segCounter = 2;
         boolean ignoreWhitespace = false;
         boolean ignoreComments = false;
         boolean putCDATAIntoText = false;
@@ -88,10 +94,10 @@ public class DOMEcho {
         
         
         if(desadvDate.length() != 6)
-        	throw new Exception("the desadv's date format is incorrect, should be YYMMDD");
+        	throw new Exception("[segment:"+segCounter+"]"+"the desadv's date format is incorrect, should be YYMMDD");
         
         if(desadvTime.length() != 4)
-        	throw new Exception("the desadv's time format is incorrect, should be HHMM");
+        	throw new Exception("[segment:"+segCounter+"]"+"the desadv's time format is incorrect, should be HHMM");
               
         
         Date today = new Date();
@@ -100,7 +106,7 @@ public class DOMEcho {
         Date desadvDateD = formatter.parse(desadvDate);
         
         if(desadvDateD.compareTo(today)==1)
-        	throw new Exception("the desadv's date is greater than today's date");
+        	throw new Exception("[segment:"+segCounter+"]"+"the desadv's date is greater than today's date");
         	
         //output = formatter.parse(desadvDate); format(today);
        // System.out.println("****************** " + desadvDateD.compareTo(today));
@@ -116,12 +122,12 @@ public class DOMEcho {
 	         
 	         // check if receiver edi code is equal to renault edi code
 	         if(!receiver.getFirstChild().getAttributes().getNamedItem("Id").toString().substring(4, 14).equals("1780129987"))
-	         	throw new Exception("ERROR: Renault EDI code is incorrect, should be 1780129987");
+	         	throw new Exception("[segment:"+segCounter+"]"+"ERROR: Renault EDI code is incorrect, should be 1780129987");
 
 	         // check if receiver edi code is equal to renault edi code
 	         try{
 	         if(!receiver.getFirstChild().getAttributes().getNamedItem("Qual").toString().equals("ZZ"))
-	         	throw new Exception("ERROR: Renault EDI code qualifiant is incorrect");
+	         	throw new Exception("[segment:"+segCounter+"]"+"ERROR: Renault EDI code qualifiant is incorrect");
 	         }catch(Exception e){ System.out.println("Qualifiant doesnt exist");
 	        	 
 	         }
@@ -203,7 +209,7 @@ public class DOMEcho {
 	         //#######################################
 
 	         if(requiredSegments.size()>0)
-	        	 throw new Exception("required segments absent:"+ requiredSegments);
+	        	 throw new Exception("[segment:"+segCounter+"]"+"required segments absent:"+ requiredSegments);
         }
     }
 
@@ -220,18 +226,18 @@ public class DOMEcho {
 
     	//################# if segment #####################################
 		if(n.getNodeName().equals("segment")){ 
+			segCounter++;
 			
 			 SegQualifiant = getQualifiant(n);
 			 actualSeg = n.getAttributes().getNamedItem("Id").getTextContent();
-			 
-			 
+			 	 
 			 if(!Arrays.asList(segsWithoutQualifiant).contains(actualSeg))
 				if(!desadvSegsListP.contains(actualSeg+"+"+SegQualifiant))
-					throw new Exception("Segment inconnue: "+actualSeg+"+"+SegQualifiant); 
+					throw new Exception("[segment:"+segCounter+"]"+"Segment inconnue: "+actualSeg+"+"+SegQualifiant); 
 			
 			 // checking  
 				if(!desadvSegsList.contains(actualSeg))
-					throw new Exception("Segment inconnue: "+actualSeg);
+					throw new Exception("[segment:"+segCounter+"]"+"Segment inconnue: "+actualSeg);
 			 
 			// start checking required segments
 			out.println("remove "+actualSeg+"+"+SegQualifiant);
@@ -250,7 +256,7 @@ public class DOMEcho {
 			}
 
 			if(mappingSeg==null)
-				throw new Exception("mapping info error! is "+actualSeg+"+"+SegQualifiant+" a valid segment?");
+				throw new Exception("[segment:"+segCounter+"]"+"mapping info error! is "+actualSeg+"+"+SegQualifiant+" a valid segment?");
 			
 			
 			//************ checking repetitivity
@@ -261,12 +267,12 @@ public class DOMEcho {
 			case "QTY+52":
 			case "MEA+AAY":
 				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PAC"))))
-					throw new Exception(actualSeg+"+"+SegQualifiant+" seg de plus !!!");
+					throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" seg de plus !!!");
 				break;
 			case "RFF+AAT":
 			case "GIR+3":
 				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PCI+17"))))
-					throw new Exception(actualSeg+"+"+SegQualifiant+" seg de plus !!!");
+					throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" seg de plus !!!");
 				break;
 			case "PIA+1":
 			case "LOC+159":
@@ -275,25 +281,48 @@ public class DOMEcho {
 			case "ALI":
 			case "IMD":
 				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("LIN"))))
-					throw new Exception(actualSeg+"+"+SegQualifiant+" seg de plus !!!");
+					throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" seg de plus !!!");
 				break;
 				
 			default:
 				System.out.println(actualSeg+"+"+SegQualifiant+" repetitivity:"+getSegRepetitivity(actualSeg+"+"+SegQualifiant));
 				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant))>Integer.parseInt(repetivity))
-					throw new Exception(actualSeg+"+"+SegQualifiant+" seg de plus ");
+					throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" seg de plus ");
 			
 			}
-			//************ checking repetitivity
+			//************ end checking repetitivity
 			
 			out.println("####"+actualSeg+"*repetivity:"+repetivity+"*required:"+required+"#######################");
 			
+			 
+			 // check DTM segments  
+			 if(actualSeg.equals("DTM")){
+
+				if(SegQualifiant.equals("11")) 
+					dtm11 = getDTM(n);
+				
+				if(SegQualifiant.equals("132")) 
+					dtm132 = getDTM(n);
+				
+				if(SegQualifiant.equals("137")) 
+					dtm137 = getDTM(n);
+				
+				if(dtm132 != null && dtm11 != null)
+					if(Long.parseLong(dtm132) <= Long.parseLong(dtm11))
+						throw new Exception("[segment:"+segCounter+"]"+"DTM+132 ne doit pas etre inferieur à DTM+11");
+				if(dtm137 != null && dtm11 != null)
+					if(Long.parseLong(dtm11) <= Long.parseLong(dtm137))
+						throw new Exception("[segment:"+segCounter+"]"+"DTM+11 ne doit pas etre inferieur à DTM+137");
+				
+			 }
+			 // end checking DTM segments 
+			 
 			
 			// start checking segments order
 			for(int h=0;h<segsOrder.size();h++){
 				if(segsOrder.get(h).get(0).get(0).equals(actualSeg+"+"+SegQualifiant)){
 					if(!segsOrder.get(h).get(1).contains(previousSeg+"+"+previousQualifiant))
-						throw new Exception("order Exception ! "+actualSeg+"+"+SegQualifiant+" does not come after "+previousSeg+"+"+previousQualifiant);
+						throw new Exception("[segment:"+segCounter+"]"+"order Exception ! "+actualSeg+"+"+SegQualifiant+" does not come after "+previousSeg+"+"+previousQualifiant);
 				}
 			}
 			// end checking segments order
@@ -319,7 +348,7 @@ public class DOMEcho {
 		    mappingElm = getMappingElm(n);
 		    
 		    if(mappingElm==null)
-		    	throw new Exception("champ "+id.substring(3)+" in "+actualSeg+"+"+SegQualifiant+" element not found in mapping!");
+		    	throw new Exception("[segment:"+segCounter+"]"+"champ "+id.substring(3)+" in "+actualSeg+"+"+SegQualifiant+" element not found in mapping!");
 		    
 			if(mappingElm.getAttributes().getLength()>2){
 			    String format = mappingElm.getAttributes().getNamedItem("format").getTextContent();
@@ -327,6 +356,7 @@ public class DOMEcho {
 			    String required = mappingElm.getAttributes().getNamedItem("required").getTextContent();
 
 			    System.out.println("***************[element]***************");
+			    System.out.println("********** content of "+id+": "+n.getTextContent());
 			    System.out.println("********** format of "+id+": "+format);
 			    System.out.println("********** length of "+id+": "+length);
 			    System.out.println("********** required of "+id+": "+required);
@@ -334,16 +364,16 @@ public class DOMEcho {
 			    
 			    //************************************
 			    // check format & length requirements
-//				if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent()) ){
-//					throw new Exception("seg is not Alphanumeric");
-//				}
+				if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent().replaceAll("\\s+","")) ){
+					throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg is not Alphanumeric");
+				}
 				
-//				if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent()) ){
-//					throw new Exception("seg is not numeric");
-//				}
+				if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent().replaceAll("\\s+","")) ){
+					throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg is not numeric");
+				}
 				
 				if(n.getTextContent().length() > Integer.parseInt(length))
-					throw new Exception(actualElm+" seg length exceeds limit");
+					throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg length exceeds limit of "+length+" chars");
 				//************************************
 			}
 			// if element is comoposite
@@ -368,21 +398,21 @@ public class DOMEcho {
 				    //************************************
 				    // check format & length requirements
 //					if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent()) ){
-//						throw new Exception("seg is not Alphanumeric");
+//						throw new Exception("[segment:"+segCounter+"]"+"seg is not Alphanumeric");
 //					}
 					
 //					if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent()) ){
-//						throw new Exception("seg is not numeric");
+//						throw new Exception("[segment:"+segCounter+"]"+"seg is not numeric");
 //					}
 					
 					if(n.getTextContent().length() > Integer.parseInt(length))
-						throw new Exception(actualElm+" seg length exceeds limit");
+						throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg length exceeds limit");
 					//************************************
 					
 					//System.out.println("Composite????"+);
 					actualElmContent = n.getTextContent();
 				    if(!desadvSegsListP.contains(actualSeg+"+"+SegQualifiant) && !desadvSegsListVar.contains(actualSeg) )
-					  throw new Exception("Qualifiant inconnue: "+actualSeg+"+"+SegQualifiant);
+					  throw new Exception("[segment:"+segCounter+"]"+"Qualifiant inconnue: "+actualSeg+"+"+SegQualifiant);
 				
 					// start segments repitition count
 					segs.add(actualSeg+"+"+SegQualifiant);
@@ -415,15 +445,15 @@ public class DOMEcho {
 			    //************************************
 			    // check format & length requirements
 //				if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent()) ){
-//					throw new Exception("seg is not Alphanumeric");
+//					throw new Exception("[segment:"+segCounter+"]"+"seg is not Alphanumeric");
 //				}
 				
 //				if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent()) ){
-//					throw new Exception("seg is not numeric");
+//					throw new Exception("[segment:"+segCounter+"]"+"seg is not numeric");
 //				}
 				
 				if(n.getTextContent().length() > Integer.parseInt(length))
-					throw new Exception(actualElm+" seg length exceeds limit");
+					throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg length exceeds limit");
 				//************************************
 			    
 			}
@@ -437,7 +467,7 @@ public class DOMEcho {
 				// end segments repitition count
 				
 				if(!desadvSegsListP.contains(actualSeg+"+"+n.getTextContent()) && !desadvSegsList.contains(actualSeg))
-					throw new Exception("Segment inconnue: "+actualSeg+"+"+n.getTextContent());
+					throw new Exception("[segment:"+segCounter+"]"+"Segment inconnue: "+actualSeg+"+"+n.getTextContent());
 				
 				out.println("remove=="+actualSeg+"+"+n.getTextContent());
 			    requiredSegments.remove(actualSeg+"+"+n.getTextContent());
@@ -603,6 +633,16 @@ public class DOMEcho {
 	       		 return Integer.parseInt(array[1]);
 	     }
 		return 0;
+    	
+    }
+    
+    public static String getDTM(Node n){
+		
+		if(n.getFirstChild().hasChildNodes()){
+		    return n.getFirstChild().getChildNodes().item(1).getTextContent();
+		}else{
+			return n.getChildNodes().item(1).getTextContent();
+		}
     	
     }
 }
