@@ -7,6 +7,7 @@ import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.error.EDISyntaxExceptionHandler;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.util.CommandLine;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -20,7 +21,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.*;
+import java.util.List;
 
 
 public class EDItoXML {
@@ -169,9 +172,10 @@ public class EDItoXML {
      * Main for EDItoXML.
      *
      * @param args command line arguments
+     * @return 
      * @throws Exception 
      */
-    public static void main(String args[]) throws Exception {
+    public static List<String> main(String args[]) throws Exception {
         CommandLine commandLine = new CommandLine(args) {
             @Override
             public String usage() {
@@ -226,7 +230,7 @@ public class EDItoXML {
         PrintStream out = null;
 		Parser e = new Parser(out);
 	    e.main(args);
-        
+        return e.errors;
     }
 
     public boolean isNamespaceEnabled() {

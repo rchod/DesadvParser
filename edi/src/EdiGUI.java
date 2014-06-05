@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.JTextArea;
@@ -20,12 +21,16 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import java.awt.Rectangle;
+
 import javax.swing.JButton;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.JScrollPane;
+
 import java.awt.ScrollPane;
 
 
@@ -109,19 +114,23 @@ public class EdiGUI {
         jp1.add(btnNewButton);
         btnNewButton_1.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
-        		
+        		List<String> errors = null;
         		System.out.println("Vérification en cours");
         		InputStreamReader inputReader = new InputStreamReader(System.in);
         		OutputStreamWriter outputWriter = new OutputStreamWriter(System.out);
 				EDItoXML edixml = new EDItoXML(inputReader, outputWriter);
         		String[] s = {selectedFile.getAbsolutePath()};
         		try {
-					edixml.main(s);
+					  errors = edixml.main(s);
+						for(int i=0;i<errors.size();i++)
+							result = result+"<span bgcolor='red'>"+errors.get(i)+"</span><br>";
+				        System.out.println(result);
+						JLabel lblNewLabe2 = new JLabel(result);        
+				        scrollPane.add(lblNewLabe2);
+					  
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					result = "<html><span bgcolor='red'>"+e.getMessage()+"</span>";
-			        JLabel lblNewLabe2 = new JLabel(result);        
-			        scrollPane.add(lblNewLabe2);
+
 				}
         		
         	}
