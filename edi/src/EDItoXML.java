@@ -169,8 +169,9 @@ public class EDItoXML {
      * Main for EDItoXML.
      *
      * @param args command line arguments
+     * @throws Exception 
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         CommandLine commandLine = new CommandLine(args) {
             @Override
             public String usage() {
@@ -178,6 +179,8 @@ public class EDItoXML {
             }
         };
         String inputFileName = "src\\DESADV.edi";
+        if(args.length>0)
+        	inputFileName = args[0];
         String outputFileName = "src\\DESADV.xml";
         boolean namespaceEnabled = "true".equals(commandLine.getOption("n"));
         boolean recover = "true".equals(commandLine.getOption("r"));
@@ -217,6 +220,13 @@ public class EDItoXML {
         theObject.run();
         String s = System.getProperty("line.separator");
         System.out.print(s + "Transformation complete" + s);
+        System.out.println("#############################");
+        //////////////////////////////////////////////////////
+        
+        PrintStream out = null;
+		DOMEcho e = new DOMEcho(out);
+	    e.main(args);
+        
     }
 
     public boolean isNamespaceEnabled() {

@@ -9,6 +9,10 @@ import javax.swing.JTextField;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Scanner;
 
 import javax.swing.JTextArea;
@@ -36,6 +40,8 @@ public class edi {
 	private JTextArea textArea = new JTextArea();
 	private JButton btnNewButton_1 = new JButton("Lancer la vérification");
 	private String result = "<html>";
+	private File selectedFile;
+	private ScrollPane scrollPane = new ScrollPane();
 
 	/** 
 	 * Launch the application.
@@ -87,8 +93,9 @@ public class edi {
                 	fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 	int result = fileChooser.showOpenDialog(jp3);
                 	if (result == JFileChooser.APPROVE_OPTION) {
-                	    File selectedFile = fileChooser.getSelectedFile();
+                	    selectedFile = fileChooser.getSelectedFile();
                 	    String text = new Scanner(selectedFile).useDelimiter("\\A").next();
+                	    System.out.println(selectedFile.getAbsolutePath());
                 	    textArea.setText(text);
                 	}
                 	
@@ -104,33 +111,28 @@ public class edi {
         	public void actionPerformed(ActionEvent arg0) {
         		
         		System.out.println("Vérification en cours");
-        		String text = textArea.getText();
-        		String[] segments = text.split("'");
+        		InputStreamReader inputReader = new InputStreamReader(System.in);
+        		OutputStreamWriter outputWriter = new OutputStreamWriter(System.out);
+				EDItoXML edixml = new EDItoXML(inputReader, outputWriter);
+        		String[] s = {selectedFile.getAbsolutePath()};
+        		try {
+					edixml.main(s);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					result = "<html><span bgcolor='red'>"+e.getMessage()+"</span>";
+			        JLabel lblNewLabe2 = new JLabel(result);        
+			        scrollPane.add(lblNewLabe2);
+				}
         		
-        		for(int i=0;i<segments.length;i++){
-        			//System.out.print(segments[i]);
-	        		String[] parts = segments[i].split("\\+");
-	        		for(int j=0;j<parts.length;j++){
-	        			//System.out.println("====>"+parts[j]);
-	        			String[] subparts = parts[j].split(":");
-	        		if(parts[j].trim().equals("BGM")){
-	        			System.out.print(parts[j]+"*************");
-        			
-	        		}
-	        		}
-        		}
         	}
         });
         btnNewButton_1.setBounds(10, 11, 167, 33);
         
         jp1.add(btnNewButton_1);
         
-        ScrollPane scrollPane = new ScrollPane();
         scrollPane.setBounds(10, 257, 414, 169);
         jp1.add(scrollPane);
         
-        JLabel lblNewLabel = new JLabel("New label");        
-        scrollPane.add(lblNewLabel);
         JLabel lblNewLabe2 = new JLabel(result);        
         scrollPane.add(lblNewLabe2);
         

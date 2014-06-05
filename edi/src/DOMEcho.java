@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.commons.lang3.StringUtils;
+//import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -216,13 +216,23 @@ public class DOMEcho {
     	out = System.out;
     	//out.println("#### start ediCheck ["+n.getNodeName()+"] ####");
     	if(n.equals(null)) return;
-    	SegQualifiant = getQualifiant(n);
+    	
 
     	//################# if segment #####################################
 		if(n.getNodeName().equals("segment")){ 
 			
+			 SegQualifiant = getQualifiant(n);
 			 actualSeg = n.getAttributes().getNamedItem("Id").getTextContent();
+			 
+			 
+			 if(!Arrays.asList(segsWithoutQualifiant).contains(actualSeg))
+				if(!desadvSegsListP.contains(actualSeg+"+"+SegQualifiant))
+					throw new Exception("Segment inconnue: "+actualSeg+"+"+SegQualifiant); 
 			
+			 // checking  
+				if(!desadvSegsList.contains(actualSeg))
+					throw new Exception("Segment inconnue: "+actualSeg);
+			 
 			// start checking required segments
 			out.println("remove "+actualSeg+"+"+SegQualifiant);
 			requiredSegments.remove(actualSeg+"+"+SegQualifiant);
@@ -240,7 +250,7 @@ public class DOMEcho {
 			}
 
 			if(mappingSeg==null)
-				throw new Exception("mapping info error! ");
+				throw new Exception("mapping info error! is "+actualSeg+"+"+SegQualifiant+" a valid segment?");
 			
 			
 			//************ checking repetitivity
@@ -276,17 +286,27 @@ public class DOMEcho {
 			}
 			//************ checking repetitivity
 			
-			
-			if(!desadvSegsList.contains(actualSeg))
-				throw new Exception("Segment inconnue: "+actualSeg);
-			
 			out.println("####"+actualSeg+"*repetivity:"+repetivity+"*required:"+required+"#######################");
+			
+			
+			// start checking segments order
+			for(int h=0;h<segsOrder.size();h++){
+				if(segsOrder.get(h).get(0).get(0).equals(actualSeg+"+"+SegQualifiant)){
+					if(!segsOrder.get(h).get(1).contains(previousSeg+"+"+previousQualifiant))
+						throw new Exception("order Exception ! "+actualSeg+"+"+SegQualifiant+" does not come after "+previousSeg+"+"+previousQualifiant);
+				}
+			}
+			// end checking segments order
+			
+			
 			NodeList elements = n.getChildNodes();
 			for(int i=0;i<elements.getLength();i++)
 				ediCheck(elements.item(i));
 			previousSeg = actualSeg;    
 			previousQualifiant = getQualifiant(n);
 			requiredSegments.remove(actualSeg);
+			
+			
 
 		}
 		//################# endif segment ##################################
@@ -298,6 +318,9 @@ public class DOMEcho {
 			actualElm = id;  
 		    mappingElm = getMappingElm(n);
 		    
+		    if(mappingElm==null)
+		    	throw new Exception("champ "+id.substring(3)+" in "+actualSeg+"+"+SegQualifiant+" element not found in mapping!");
+		    
 			if(mappingElm.getAttributes().getLength()>2){
 			    String format = mappingElm.getAttributes().getNamedItem("format").getTextContent();
 			    String length = mappingElm.getAttributes().getNamedItem("length").getTextContent();
@@ -307,6 +330,21 @@ public class DOMEcho {
 			    System.out.println("********** format of "+id+": "+format);
 			    System.out.println("********** length of "+id+": "+length);
 			    System.out.println("********** required of "+id+": "+required);
+			    
+			    
+			    //************************************
+			    // check format & length requirements
+//				if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent()) ){
+//					throw new Exception("seg is not Alphanumeric");
+//				}
+				
+//				if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent()) ){
+//					throw new Exception("seg is not numeric");
+//				}
+				
+				if(n.getTextContent().length() > Integer.parseInt(length))
+					throw new Exception(actualElm+" seg length exceeds limit");
+				//************************************
 			}
 			// if element is comoposite
 			if(n.getAttributes().getLength()>1){
@@ -316,31 +354,29 @@ public class DOMEcho {
 				}
 			}else{ // if element is not composite
 				if(actualElm.equals(actualSeg+"01")){
+					Node mp = getMappingElm2(n);
 					
-					Node mE = null;
-					if(mappingElm.getAttributes().getLength()==2)
-						mE = getMappingSubElm(n.getFirstChild());
-					else mE = mappingElm;
+					System.out.println(mp.getNodeName());
 					
 					System.out.println(n.getAttributes().getLength());
-					System.out.println(mE.getAttributes().getNamedItem("Id"));
+					System.out.println(mp.getAttributes().getNamedItem("Id"));
 					
-				    String format = mE.getAttributes().getNamedItem("format").getTextContent();
-				    String length = mE.getAttributes().getNamedItem("length").getTextContent();
-				    String required = mE.getAttributes().getNamedItem("required").getTextContent();
+				    String format = mp.getAttributes().getNamedItem("format").getTextContent();
+				    String length = mp.getAttributes().getNamedItem("length").getTextContent();
+				    String required = mp.getAttributes().getNamedItem("required").getTextContent();
 
 				    //************************************
 				    // check format & length requirements
-					if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent()) ){
-						throw new Exception("seg is not Alphanumeric");
-					}
+//					if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent()) ){
+//						throw new Exception("seg is not Alphanumeric");
+//					}
 					
-					if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent()) ){
-						throw new Exception("seg is not numeric");
-					}
+//					if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent()) ){
+//						throw new Exception("seg is not numeric");
+//					}
 					
 					if(n.getTextContent().length() > Integer.parseInt(length))
-						throw new Exception("seg length exceeds limit");
+						throw new Exception(actualElm+" seg length exceeds limit");
 					//************************************
 					
 					//System.out.println("Composite????"+);
@@ -351,16 +387,7 @@ public class DOMEcho {
 					// start segments repitition count
 					segs.add(actualSeg+"+"+SegQualifiant);
 					// end segments repitition count
-					
-					// start checking segments order
-					for(int h=0;h<segsOrder.size();h++){
 
-						if(segsOrder.get(h).get(0).get(0).equals(actualSeg+"+"+SegQualifiant)){
-							if(!segsOrder.get(h).get(1).contains(previousSeg+"+"+previousQualifiant))
-								throw new Exception("order Exception ! "+actualSeg+"+"+actualElmContent+" does not come after "+previousSeg+"+"+previousQualifiant);
-						}
-					}
-					// end checking segments order
 					previousElmContent = n.getTextContent();
 				}
 			}
@@ -384,6 +411,21 @@ public class DOMEcho {
 			    System.out.println("********** format of "+sequence+": "+format);
 			    System.out.println("********** length of "+sequence+": "+length);
 			    System.out.println("********** required of "+sequence+": "+required);
+			    
+			    //************************************
+			    // check format & length requirements
+//				if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent()) ){
+//					throw new Exception("seg is not Alphanumeric");
+//				}
+				
+//				if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent()) ){
+//					throw new Exception("seg is not numeric");
+//				}
+				
+				if(n.getTextContent().length() > Integer.parseInt(length))
+					throw new Exception(actualElm+" seg length exceeds limit");
+				//************************************
+			    
 			}
 			
 			if(actualElm.equals(actualSeg+"01") && isComposite.equals("yes") && sequence.equals("1")){
@@ -475,6 +517,30 @@ public class DOMEcho {
     }
     
     
+    //############################ getMappingElm2() ##########################
+    public static Node getMappingElm2(Node n){
+    	String id = n.getAttributes().getNamedItem("Id").getTextContent();
+
+//    	System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+//    	System.out.println("[element] starting search for mapping info of "+id);
+//    	System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+    	
+    	NodeList childnodes = mappingSeg.getChildNodes();
+    	for(int i=0;i<childnodes.getLength();i++){
+    		if(childnodes.item(i).getNodeName().equals("element")){
+    			if(childnodes.item(i).getAttributes().getNamedItem("Id").getTextContent().equals(id)){
+    				if(childnodes.item(i).getAttributes().getLength()==2)
+    					return childnodes.item(i).getChildNodes().item(1);
+    				else
+    					return childnodes.item(i);
+    			}
+    		}
+    	}
+    	System.out.println("%%%%failed to find mapping elemnt%%%");
+		return null;
+    
+    }
+    
     //############################ getMappingElm() ##########################
     public static Node getMappingElm(Node n){
     	String id = n.getAttributes().getNamedItem("Id").getTextContent();
@@ -497,6 +563,8 @@ public class DOMEcho {
     
     //############################ getMappingSubElm() ##########################
     public static Node getMappingSubElm(Node n){
+    	
+    	System.out.println(n.getAttributes().getLength());
     	String sequence = n.getAttributes().getNamedItem("Sequence").getTextContent();
 
 //    	System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
@@ -519,11 +587,11 @@ public class DOMEcho {
     //##################### getQualifiant(Node n) ############################*
     public static String getQualifiant(Node n){
     	
-		if(n.getFirstChild().hasChildNodes())
+		if(n.getFirstChild().hasChildNodes()){
 		    return n.getFirstChild().getFirstChild().getTextContent();
-		else
+		}else{
 			return n.getFirstChild().getTextContent();
-    	
+		}
     }
     
     //##################### getSegRepetitivity(String s) ############################*
