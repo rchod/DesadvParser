@@ -42,10 +42,11 @@ public class EDItoXML {
 
     /** 
      * Main processing method for the EDItoXML object
+     * @throws TransformerException 
      */
-    public void run() {
+    public void run() throws TransformerException {
 
-        try {
+
             XMLReader ediReader = new EDIReader();
 
             // Tell the ediReader if an xmlns="http://..." is desired
@@ -60,22 +61,12 @@ public class EDItoXML {
 
             // Establish the SAXSource
             SAXSource source = new SAXSource(ediReader, inputSource);
-
             // Establish a Transformer
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
-
             // Use a StreamResult to capture the generated XML output
             StreamResult result = new StreamResult(generatedOutput);
-
             // Call the Transformer to generate XML output from the parsed input
             transformer.transform(source, result);
-        } catch (TransformerConfigurationException e) {
-            System.err.println("\nUnable to create Transformer: " + e);
-        } catch (TransformerException e) {
-            // System.err.println("\nFailure to transform: " + e);
-            // System.err.println(e.getMessage());
-        }
-
         try {
             inputReader.close();
         } catch (IOException ignored) {
@@ -84,6 +75,7 @@ public class EDItoXML {
             generatedOutput.close();
         } catch (IOException ignored) {
         }
+        
     }
 
 

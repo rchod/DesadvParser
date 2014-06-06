@@ -50,7 +50,7 @@ public class EdiGUI {
 	private JButton btnNewButton_1 = new JButton("Lancer la vérification");
 	private String result = "<html>";
 	private File selectedFile;
-	private ScrollPane scrollPane = new ScrollPane();
+	private ScrollPane scrollPane = new ScrollPane();;
 	private String text;
 
 	/** 
@@ -82,7 +82,7 @@ public class EdiGUI {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 474);
+		frame.setBounds(100, 100, 700, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.getContentPane().add(jp1, BorderLayout.CENTER);
@@ -90,7 +90,7 @@ public class EdiGUI {
         jp2.setLayout(null);
         
         
-        textArea.setBounds(new Rectangle(10, 51, 414, 200));
+        textArea.setBounds(new Rectangle(10, 50, 670, 400));
         jp1.add(textArea);
         
         JButton btnNewButton = new JButton("Ouvrir un fichier");
@@ -116,11 +116,14 @@ public class EdiGUI {
         		}
         	}
         });
-        btnNewButton.setBounds(247, 11, 177, 33);
+        
+        btnNewButton.setBounds(250, 10, 180, 30);
         jp1.add(btnNewButton);
         btnNewButton_1.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		HashSet<String> errors = null;
+        		result = "<html>";
+        		scrollPane.removeAll();
         		System.out.println("Vérification en cours");
         		
         		PrintWriter writer = null;
@@ -139,7 +142,7 @@ public class EdiGUI {
         		InputStreamReader inputReader = new InputStreamReader(System.in);
         		OutputStreamWriter outputWriter = new OutputStreamWriter(System.out);
 				EDItoXML edixml = new EDItoXML(inputReader, outputWriter);
-        		String[] s = {selectedFile.getAbsolutePath()};
+        		String[] s = {"src\\desadv.tmp"};
 
         		
         		try {
@@ -155,16 +158,16 @@ public class EdiGUI {
 					  
 				}catch (Exception e) {
 					// TODO Auto-generated catch block
-
+					scrollPane.add(new JLabel("<html><span bgcolor='red'>"+e.getMessage().split(":")[1]+"</span>"));
 				}
         		
         	}
         });
-        btnNewButton_1.setBounds(10, 11, 167, 33);
+        btnNewButton_1.setBounds(10, 10, 170, 30);
         
         jp1.add(btnNewButton_1);
         
-        scrollPane.setBounds(10, 257, 414, 169);
+        scrollPane.setBounds(10, 450, 670, 200);
         jp1.add(scrollPane);
         
         JLabel lblNewLabe2 = new JLabel(result);        
