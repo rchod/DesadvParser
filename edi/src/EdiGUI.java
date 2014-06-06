@@ -9,10 +9,14 @@ import javax.swing.JTextField;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
@@ -47,6 +51,7 @@ public class EdiGUI {
 	private String result = "<html>";
 	private File selectedFile;
 	private ScrollPane scrollPane = new ScrollPane();
+	private String text;
 
 	/** 
 	 * Launch the application.
@@ -99,9 +104,10 @@ public class EdiGUI {
                 	int result = fileChooser.showOpenDialog(jp3);
                 	if (result == JFileChooser.APPROVE_OPTION) {
                 	    selectedFile = fileChooser.getSelectedFile();
-                	    String text = new Scanner(selectedFile).useDelimiter("\\A").next();
                 	    System.out.println(selectedFile.getAbsolutePath());
+                	    text = new Scanner(selectedFile).useDelimiter("\\A").next();
                 	    textArea.setText(text);
+                	    
                 	}
                 	
                 	
@@ -114,21 +120,40 @@ public class EdiGUI {
         jp1.add(btnNewButton);
         btnNewButton_1.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
-        		List<String> errors = null;
+        		HashSet<String> errors = null;
         		System.out.println("Vérification en cours");
+        		
+        		PrintWriter writer = null;
+				try {
+					writer = new PrintWriter("src\\desadv.tmp", "UTF-8");
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (UnsupportedEncodingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+        		writer.println(textArea.getText());
+        		writer.close();
+        		
         		InputStreamReader inputReader = new InputStreamReader(System.in);
         		OutputStreamWriter outputWriter = new OutputStreamWriter(System.out);
 				EDItoXML edixml = new EDItoXML(inputReader, outputWriter);
         		String[] s = {selectedFile.getAbsolutePath()};
+
+        		
         		try {
 					  errors = edixml.main(s);
-						for(int i=0;i<errors.size();i++)
-							result = result+"<span bgcolor='red'>"+errors.get(i)+"</span><br>";
-				        System.out.println(result);
+				        for (String s1 : errors) {
+				        	result = result+"<span bgcolor='red'>"+s1+"</span><br>";
+				        }
 						JLabel lblNewLabe2 = new JLabel(result);        
 				        scrollPane.add(lblNewLabe2);
+				        
+				        if(errors.size()==0)
+				        	scrollPane.add(new JLabel("<html><span bgcolor='green'>Aucune erreure detectée</span>"));
 					  
-				} catch (Exception e) {
+				}catch (Exception e) {
 					// TODO Auto-generated catch block
 
 				}

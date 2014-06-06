@@ -23,6 +23,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -175,14 +176,14 @@ public class EDItoXML {
      * @return 
      * @throws Exception 
      */
-    public static List<String> main(String args[]) throws Exception {
+    public static HashSet<String> main(String args[]) throws Exception {
         CommandLine commandLine = new CommandLine(args) {
             @Override
             public String usage() {
                 return "EDItoXML [inputfile] [-o outputfile] [-n true|false] [-r true|false]";
             }
         };
-        String inputFileName = "src\\DESADV.edi";
+        String inputFileName = "src\\desadv.tmp";
         if(args.length>0)
         	inputFileName = args[0];
         String outputFileName = "src\\DESADV.xml";
