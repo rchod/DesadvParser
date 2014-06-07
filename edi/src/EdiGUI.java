@@ -148,7 +148,7 @@ public class EdiGUI {
         		try {
 					  errors = edixml.main(s);
 				        for (String s1 : errors) {
-				        	result = result+"<span bgcolor='red'>"+s1+"</span><br>";
+				        	result = result+"<span bgcolor='red' style='font-size:150%' >"+s1+"</span><br>";
 				        }
 						JLabel lblNewLabe2 = new JLabel(result);        
 				        scrollPane.add(lblNewLabe2);

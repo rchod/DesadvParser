@@ -480,7 +480,7 @@
 <element Id="QTY01" Composite="yes">
 <subelement Sequence="1" required="1" length="3" format="an">12</subelement>
 <subelement Sequence="2" required="1" length="15" format="n"></subelement>
-<subelement Sequence="3" required="0" length="3" format="an"></subelement>
+<subelement Sequence="3" required="0" length="3" format="an">PCE</subelement>
 </element>
 </segment>
 
