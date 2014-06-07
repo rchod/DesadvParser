@@ -383,7 +383,7 @@
 </element>
 <element Id="GIR04" Composite="yes">
 <subelement Sequence="1" required="1" length="35" format="an"></subelement>
-<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an">BU</subelement>
 <subelement Sequence="3" required="0" length="3" format="an"></subelement>
 </element>
 <element Id="GIR05" Composite="yes">
@@ -421,7 +421,7 @@
 <element Id="PIA01" required="1" length="3" format="an">1</element>
 <element Id="PIA02" Composite="yes">
 <subelement Sequence="1" required="0" length="35" format="an"></subelement>
-<subelement Sequence="2" required="0" length="3" format="an"></subelement>
+<subelement Sequence="2" required="0" length="3" format="an">SA</subelement>
 <subelement Sequence="3" required="0" length="3" format="an"></subelement>
 <subelement Sequence="4" required="0" length="3" format="an"></subelement>
 </element>

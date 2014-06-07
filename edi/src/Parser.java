@@ -56,7 +56,9 @@ public class Parser {
     private static String dtm137 = null;
     private static int lineCounter = 0;
     private static int segCounter = 2;
+    private static int girCounter = 0;
     private static String SSS="";
+    private static int pac = 0;
     
     Parser(PrintStream out) {
         this.out = out;
@@ -71,6 +73,8 @@ public class Parser {
     	desadvSegsListP.clear();
     	desadvSegsList.clear();
     	segCounter = 2;
+    	girCounter = 0;
+        pac = 0;
     	
     	
         boolean ignoreWhitespace = false;
@@ -243,7 +247,7 @@ public class Parser {
   //#############################################################  
     private static void ediCheck(Node n) throws Exception {
     	
-
+    	
     	out = System.out;
     	//out.println("#### start ediCheck ["+n.getNodeName()+"] ####");
     	if(n.equals(null)) return;
@@ -307,15 +311,15 @@ public class Parser {
 			case "QTY+52":
 			case "MEA+AAY":
 				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PAC")))){
-					errors.add(SSS+"[segment "+segCounter+"] "+ actualSeg+"+"+SegQualifiant+" seg de plus !!!");
-					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" seg de plus !!!");
+					errors.add(SSS+"[segment "+segCounter+"] "+ actualSeg+"+"+SegQualifiant+" de plus !!!");
+					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" de plus !!!");
 				}
 				break;
 			case "RFF+AAT":
 			case "GIR+3":
 				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("PCI+17")))){
-					errors.add(SSS+"[segment "+segCounter+"] "+actualSeg+"+"+SegQualifiant+" seg de plus !!!");
-					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" seg de plus !!!");
+					errors.add(SSS+"[segment "+segCounter+"] "+actualSeg+"+"+SegQualifiant+" de plus !!!");
+					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" de plus !!!");
 				}
 				break;
 			case "PIA+1":
@@ -323,16 +327,16 @@ public class Parser {
 			case "RFF+ON":
 			case "QTY+12":
 				if((getSegRepetitivity(actualSeg+"+"+SegQualifiant)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("LIN")))){
-					errors.add(SSS+"[segment "+segCounter+"] "+actualSeg+"+"+SegQualifiant+" seg de plus !!!"+getSegRepetitivity(actualSeg+"+"+SegQualifiant));
-					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" seg de plus !!!");
+					errors.add(SSS+"[segment "+segCounter+"] "+actualSeg+"+"+SegQualifiant+" de plus !!!"+getSegRepetitivity(actualSeg+"+"+SegQualifiant));
+					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" de plus !!!");
 				}
 				break;
 				
 			default:
 				System.out.println(actualSeg+"+"+SegQualifiant+" repetitivity:"+getSegRepetitivity(actualSeg+"+"+SegQualifiant));
 				if(!Arrays.asList(segsWithoutQualifiant).contains(actualSeg) && (getSegRepetitivity(actualSeg+"+"+SegQualifiant))>Integer.parseInt(repetivity)){
-					errors.add(SSS+"[segment "+segCounter+"] "+actualSeg+"+"+SegQualifiant+" seg de plus ");
-					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" seg de plus ");
+					errors.add(SSS+"[segment "+segCounter+"] "+actualSeg+"+"+SegQualifiant+" de plus ");
+					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" de plus ");
 				}
 			
 			}
@@ -342,17 +346,38 @@ public class Parser {
 			case "ALI":
 			case "IMD":
 				if((getSegRepetitivity(actualSeg)) > (Integer.parseInt(repetivity)*(getSegRepetitivity("LIN")))){
-					errors.add(SSS+"[segment "+segCounter+"] "+actualSeg+"+"+SegQualifiant+" seg de plus !!!"+getSegRepetitivity(actualSeg+"+"+SegQualifiant));
-					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" seg de plus !!!");
+					errors.add(SSS+"[segment "+segCounter+"] "+actualSeg+"+"+SegQualifiant+" de plus !!!"+getSegRepetitivity(actualSeg+"+"+SegQualifiant));
+					//throw new Exception("[segment:"+segCounter+"]"+actualSeg+"+"+SegQualifiant+" de plus !!!");
 				}
 				break;
 			
 			}
-			
+			//************************************
 			//************ end checking repetitivity
 			
-			out.println("####"+actualSeg+"*repetivity:"+repetivity+"*required:"+required+"#######################");
 			
+			//************ check GIR segs ********************
+			
+			if(actualSeg.equals("PAC")){
+				System.out.println(getQualifiant(n)+":+++++++++++++++++++++++++++++++++");
+				pac = Integer.parseInt(getQualifiant(n));
+			}
+			
+			if(actualSeg.equals("GIR")){
+				girCounter++;
+			}
+			
+			if(actualSeg.equals("LIN")){
+				if(girCounter>pac)
+					errors.add(SSS+"[segment "+segCounter+"] segment GIR de plus ! should be "+pac+" found "+girCounter);
+				if(girCounter<pac)
+					errors.add(SSS+"[segment "+segCounter+"] segment GIR de moins ! should be "+pac+" found "+girCounter);
+				girCounter = 0;
+			}
+			
+			
+			//************* end check GIR segs ****************
+						
 			 
 			 // check DTM segments  
 			 if(actualSeg.equals("DTM")){
@@ -439,18 +464,18 @@ public class Parser {
 			    //************************************
 			    // check format & length requirements
 				if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent().replaceAll("\\s+","")) ){
-					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+" seg is not Alphanumeric");
-					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg is not Alphanumeric");
+					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+" is not Alphanumeric");
+					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" is not Alphanumeric");
 				}
 				
 				if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent().replaceAll("\\s+","")) ){
-					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+" seg is not numeric");
-					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg is not numeric");
+					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+" is not numeric");
+					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" is not numeric");
 				}
 				
 				if(n.getTextContent().length() > Integer.parseInt(length))
-					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+" seg length exceeds limit of "+length+" chars");
-					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg length exceeds limit of "+length+" chars");
+					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+" length exceeds limit of "+length+" chars");
+					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" length exceeds limit of "+length+" chars");
 				//************************************
 			}
 			// if element is comoposite
@@ -462,12 +487,7 @@ public class Parser {
 			}else{ // if element is not composite
 				if(actualElm.equals(actualSeg+"01")){
 					Node mp = getMappingElm2(n);
-					
-					System.out.println(mp.getNodeName());
-					System.out.println(mp.getTextContent());
-					System.out.println(n.getAttributes().getLength());
-					System.out.println(mp.getAttributes().getNamedItem("Id"));
-					
+			
 				    String format = mp.getAttributes().getNamedItem("format").getTextContent();
 				    String length = mp.getAttributes().getNamedItem("length").getTextContent();
 				    String required = mp.getAttributes().getNamedItem("required").getTextContent();
@@ -521,18 +541,18 @@ public class Parser {
 			    //************************************
 			    // check format & length requirements
 				if(format.equals("an") && !StringUtils.isAlphanumeric(n.getTextContent().replaceAll("\\s+","")) ){
-					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+"[subelement:"+sequence+"] seg is not Alphanumeric");
-					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg is not Alphanumeric");
+					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+"[subelement:"+sequence+"] is not Alphanumeric");
+					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" is not Alphanumeric");
 				}
 				
 				if(format.equals("n") && !StringUtils.isNumeric(n.getTextContent().replaceAll("\\s+","")) ){
-					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+"[subelement:"+sequence+" seg is not numeric");
-					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg is not numeric");
+					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+"[subelement:"+sequence+" is not numeric");
+					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" is not numeric");
 				}
 				
 				if(n.getTextContent().length() > Integer.parseInt(length))
-					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+"[subelement:"+sequence+" seg length exceeds limit of "+length+" chars");
-					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" seg length exceeds limit of "+length+" chars");
+					errors.add(SSS+"[segment "+segCounter+"] "+ actualElm+"[subelement:"+sequence+" length exceeds limit of "+length+" chars");
+					//throw new Exception("[segment:"+segCounter+"]"+actualElm+" length exceeds limit of "+length+" chars");
 				//************************************
 			    
 			}
@@ -716,7 +736,7 @@ public class Parser {
 		return 0;
     	
     }
-    
+    //##################### getDTM(Node n) ############################*
     public static String getDTM(Node n){
 		
 		if(n.getFirstChild().hasChildNodes()){
