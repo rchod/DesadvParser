@@ -1,5 +1,6 @@
 import java.awt.EventQueue;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -10,20 +11,27 @@ import javax.swing.JTextPane;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Rectangle;
 
 
 import java.awt.ScrollPane;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -53,6 +61,8 @@ public class EdiGUI {
 	private final JMenuItem mntmStructureDunDesadv = new JMenuItem("Structure d'un DESADV");
 	private final JMenuItem mntmQuestCeQuun = new JMenuItem("Qu'est ce qu'un DESADV?");
 	private final JMenuItem mntmDgrouper = new JMenuItem("D\u00E9grouper");
+	JCheckBoxMenuItem chckbxmntmIgnorerLesErreurs;
+	JCheckBoxMenuItem chckbxmntmLectureSeulePour;
 
 	/** 
 	 * Launch the application.
@@ -86,7 +96,9 @@ public class EdiGUI {
 		frame.setBounds(100, 100, 700, 700);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src\\EDI-Logo.gif"));
+		frame.setTitle("DESADV Parser");
+		
 		frame.getContentPane().add(jp1, BorderLayout.CENTER);
         jp1.setLayout(null);
         jp2.setLayout(null);
@@ -128,29 +140,36 @@ public class EdiGUI {
 
         		DefaultHighlighter.DefaultHighlightPainter highlightPainter = 
         		        new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
-
+        		
+        		
         		try {
+
+        			
 					  errors =  (HashSet<String>) edixml.main(s).get(0);
-					  List errorLines =  (List) edixml.main(s).get(1);
+				        
+		                if(chckbxmntmIgnorerLesErreurs.isSelected()){
+		                	System.out.println("++++++++++++ selected ++++++++++++++++++");
+		                	Iterator<String> iterator = errors.iterator();
+		                	 while (iterator.hasNext()){
+		                		 String s1 = iterator.next();
+		                		 if(s1.contains("Alphanumeric")){
+		                			 errors.remove(s1);
+		                		 }
+		                	 }
+		                }
 					  
-					  if(errorLines.size()!=errors.size())
-						  throw new Exception(errorLines.size()+"!="+errors.size());
-					  
-				        for (int l=0;l<errorLines.size();l++) {
+				        for (String s1: errors) {
+				        	result = result+"<div style='color:red;width:100%' >"+s1+"</div><hr>";
 				        	
-				        	int startPos = getPosHighlight((int) errorLines.get(l)-1)[0];
-				        	int endPos = getPosHighlight((int) errorLines.get(l)-1)[1]; 
+				        	int line = getErrorLine(s1);
+				        	int startPos = getPosHighlight(line-1)[0];
+				        	int endPos = getPosHighlight(line-1)[1]; 
 		        		    try {
 								textArea.getHighlighter().addHighlight(startPos, endPos,highlightPainter);
 							} catch (BadLocationException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}	
-				        	
-				        }
-				        
-				        for (String s1: errors) {
-				        	result = result+"<div style='color:red;width:100%' >"+s1+"</div><hr>";
 				        	
 				        }		        
 				        
@@ -172,6 +191,16 @@ public class EdiGUI {
 				}
         		
         	}
+
+			private int getErrorLine(String s) {
+				// TODO Auto-generated method stub
+				String regex = ".*\\[segment ([0-9]+)\\].*";
+				Pattern p = Pattern.compile(regex);
+			    Matcher m = p.matcher(s);
+				if(m.find())
+					return Integer.parseInt(m.group(1));
+				return 0;
+			}
 
 			private int[] getPosHighlight(int line) {
 				// TODO Auto-generated method stub
@@ -219,12 +248,12 @@ public class EdiGUI {
         
         mnEdition.add(mntmDgrouper);
         
-        JCheckBoxMenuItem chckbxmntmLectureSeulePour = new JCheckBoxMenuItem("Lecture seule pour le document actuel");
+         chckbxmntmLectureSeulePour = new JCheckBoxMenuItem("Lecture seule pour le document actuel");
         mnEdition.add(chckbxmntmLectureSeulePour);
         
         menuBar.add(mnParamtrage);
         
-        JCheckBoxMenuItem chckbxmntmIgnorerLesErreurs = new JCheckBoxMenuItem("Ignorer les erreurs Alphanum\u00E9riques");
+         chckbxmntmIgnorerLesErreurs = new JCheckBoxMenuItem("Ignorer les erreurs Alphanum\u00E9riques");
         mnParamtrage.add(chckbxmntmIgnorerLesErreurs);
         
         menuBar.add(mnLancerLaVrification);
@@ -261,5 +290,21 @@ public class EdiGUI {
         	}
         });
         
+        chckbxmntmLectureSeulePour.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		
+                try {
+                	if(textArea.isEditable())
+                		textArea.setEditable(false);
+                	else
+                		textArea.setEditable(true);
+                	
+                }catch (Exception e1) {
+        			e1.printStackTrace();
+        		}
+        	}
+        });
+        
+
 	}
 }
