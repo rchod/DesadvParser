@@ -23,6 +23,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -33,6 +34,8 @@ public class EDItoXML {
     private final Reader inputReader;
     private boolean namespaceEnabled;
     private boolean recover;
+    public static List<Object> result = new ArrayList<Object>();
+
 
     public EDItoXML(Reader inputReader, Writer outputWriter) {
         this.inputReader = inputReader;
@@ -168,17 +171,17 @@ public class EDItoXML {
      * @return 
      * @throws Exception 
      */
-    public static HashSet<String> main(String args[]) throws Exception {
+    public static List main(String args[]) throws Exception {
         CommandLine commandLine = new CommandLine(args) {
             @Override
             public String usage() {
                 return "EDItoXML [inputfile] [-o outputfile] [-n true|false] [-r true|false]";
             }
         };
-        String inputFileName = "src\\desadv.tmp";
+        String inputFileName = "src\\_desadv.tmp";
         if(args.length>0)
         	inputFileName = args[0];
-        String outputFileName = "src\\DESADV.xml";
+        String outputFileName = "src\\_desadv.xml";
         boolean namespaceEnabled = "true".equals(commandLine.getOption("n"));
         boolean recover = "true".equals(commandLine.getOption("r"));
 
@@ -223,7 +226,11 @@ public class EDItoXML {
         PrintStream out = null;
 		Parser e = new Parser(out);
 	    e.main(args);
-        return e.errors;
+	    result.add(e.errors);
+	    result.add(e.errorsLines);
+	    
+	    
+        return result;
     }
 
     public boolean isNamespaceEnabled() {

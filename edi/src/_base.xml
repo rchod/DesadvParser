@@ -16,7 +16,7 @@
 <segment Id="DTM" required="1" repetivity="1">
 <element Id="DTM01" Composite="yes">
 <subelement Sequence="1" required="1" length="3" format="an">132</subelement>
-<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="12" format="n"></subelement>
 <subelement Sequence="3" required="0" length="3" format="an">203</subelement>
 </element>
 </segment>
@@ -25,7 +25,7 @@
 <segment Id="DTM" required="1" repetivity="1">
 <element Id="DTM01" Composite="yes">
 <subelement Sequence="1" required="1" length="3" format="an">137</subelement>
-<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="12" format="n"></subelement>
 <subelement Sequence="3" required="0" length="3" format="an">203</subelement>
 </element>
 </segment>
@@ -34,13 +34,13 @@
 <segment Id="DTM" required="0" repetivity="1">
 <element Id="DTM01" Composite="yes">
 <subelement Sequence="1" required="1" length="3" format="an">11</subelement>
-<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="12" format="n"></subelement>
 <subelement Sequence="3" required="0" length="3" format="an">203</subelement>
 </element>
 </segment>
 
 
-<segment Id="ALI" required="0" repetivity="1">
+<segment Id="ALI" required="0" repetivity="11">
 <element Id="ALI01" required="0" length="3" format="an"></element>
 <element Id="ALI02" required="0" length="3" format="an"></element>
 <element Id="ALI03" required="0" length="3" format="an"></element>
@@ -82,7 +82,7 @@
 <segment Id="RFF" required="0" repetivity="1">
 <element Id="RFF01" Composite="yes">
 <subelement Sequence="1" required="1" length="3" format="an">CRN</subelement>
-<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="35" format="an">REGEX:^(P|D|R)[0-9]{9}</subelement>
 <subelement Sequence="3" required="0" length="6" format="an"></subelement>
 <subelement Sequence="4" required="0" length="35" format="an"></subelement>
 </element>
@@ -151,7 +151,7 @@
 <segment Id="NAD" required="1" repetivity="1">
 <element Id="NAD01" required="1" length="3" format="an">CZ</element>
 <element Id="NAD02" Composite="yes">
-<subelement Sequence="1" required="1" length="10" format="an"></subelement>
+<subelement Sequence="1" required="1" length="35" format="an"></subelement>
 <subelement Sequence="2" required="0" length="3" format="an"></subelement>
 <subelement Sequence="3" required="0" length="3" format="an">92</subelement>
 </element>
@@ -221,7 +221,7 @@
 <segment Id="RFF" required="1" repetivity="1">
 <element Id="RFF01" Composite="yes">
 <subelement Sequence="1" required="1" length="3" format="an">ADE</subelement>
-<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="8" format="an"></subelement>
 <subelement Sequence="3" required="0" length="6" format="an"></subelement>
 <subelement Sequence="4" required="0" length="35" format="an"></subelement>
 </element>
@@ -342,9 +342,9 @@
 <subelement Sequence="9" required="0" length="35" format="an"></subelement>
 <subelement Sequence="10" required="0" length="35" format="an"></subelement>
 </element>
-<element Id="PCI03" required="0" length="3" format="an">17</element>
+<element Id="PCI03" required="0" length="3" format="an"></element>
 <element Id="PCI04" Composite="yes">
-<subelement Sequence="1" required="1" length="3" format="an">G|M|S</subelement>
+<subelement Sequence="1" required="1" length="3" format="an">REGEX:G|M|S</subelement>
 <subelement Sequence="2" required="0" length="3" format="an"></subelement>
 <subelement Sequence="3" required="0" length="3" format="an"></subelement>
 </element>
@@ -372,17 +372,17 @@
 <segment Id="GIR" required="1" repetivity="100">
 <element Id="GIR01" required="1" length="3" format="an">3</element>
 <element Id="GIR02" Composite="yes">
-<subelement Sequence="1" required="1" length="35" format="an"></subelement>
-<subelement Sequence="2" required="0" length="3" format="an">ML</subelement>
+<subelement Sequence="1" required="1" length="35" format="an">REGEX:[A-Z]?[0-9]{9}</subelement>
+<subelement Sequence="2" required="0" length="3" format="an">REGEX:ML|BU|BX|AL</subelement>
 <subelement Sequence="3" required="0" length="3" format="an"></subelement>
 </element>
 <element Id="GIR03" Composite="yes">
 <subelement Sequence="1" required="1" length="35" format="an"></subelement>
-<subelement Sequence="2" required="0" length="3" format="an">AL</subelement>
+<subelement Sequence="2" required="0" length="3" format="an">REGEX:ML|BU|BX|AL</subelement>
 <subelement Sequence="3" required="0" length="3" format="an"></subelement>
 </element>
 <element Id="GIR04" Composite="yes">
-<subelement Sequence="1" required="1" length="35" format="an"></subelement>
+<subelement Sequence="1" required="1" length="35" format="an">REGEX:^(LR|LE|L[1-9])\w*</subelement>
 <subelement Sequence="2" required="0" length="3" format="an">BU</subelement>
 <subelement Sequence="3" required="0" length="3" format="an"></subelement>
 </element>
@@ -413,7 +413,7 @@
 <subelement Sequence="2" required="0" length="6" format="n"></subelement>
 </element>
 <element Id="LIN05" required="0" length="2" format="n"></element>
-<element Id="LIN06" required="0" length="3" format="n"></element>
+<element Id="LIN06" required="0" length="3" format="n">0</element>
 </segment>
 
 
@@ -485,7 +485,7 @@
 </segment>
 
 
-<segment Id="ALI" required="1" repetivity="10">
+<segment Id="ALI" required="1" repetivity="11">
 <element Id="ALI01" required="1" length="3" format="an"></element>
 <element Id="ALI02" required="0" length="3" format="an"></element>
 <element Id="ALI03" required="0" length="3" format="an"></element>
@@ -508,7 +508,7 @@
 <segment Id="RFF" required="0" repetivity="1">
 <element Id="RFF01" Composite="yes">
 <subelement Sequence="1" required="1" length="3" format="an">ON</subelement>
-<subelement Sequence="2" required="0" length="35" format="an"></subelement>
+<subelement Sequence="2" required="0" length="6" format="n"></subelement>
 <subelement Sequence="3" required="0" length="6" format="an"></subelement>
 <subelement Sequence="4" required="0" length="35" format="an"></subelement>
 </element>
