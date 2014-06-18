@@ -15,3 +15,8 @@ it can detect the following errors:
 - UNT and UNZ check
 - numeric and alphanumeric format
 - DESADV header errors
+
+logical errors:
+
+- wrong number of GIR segments
+- wrong total of packages
