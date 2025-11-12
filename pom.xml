@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.desadv</groupId>
+    <artifactId>desadv-parser</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>DESADV Parser</name>
+    <description>A tool to parse DESADV EDI messages and detect errors</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- Apache Commons Lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+
+        <!-- BerryWorks EDIReader -->
+        <!-- 
+             REQUIRED: This library is essential for the project to work.
+             It is not available in Maven Central.
+             
+             To build and run this project:
+             1. Download edireader-4.7.3.jar from BerryWorks (https://www.berryworks.com/)
+             2. Create the lib/ directory: mkdir -p lib
+             3. Place edireader-4.7.3.jar in the lib/ directory
+             4. Then run: mvn clean compile
+             
+             See SETUP.md for detailed instructions.
+        -->
+        <dependency>
+            <groupId>com.berryworks</groupId>
+            <artifactId>edireader</artifactId>
+            <version>4.7.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/edireader-4.7.3.jar</systemPath>
+            <optional>false</optional>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>edi/src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>edi/src</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.txt</include>
+                    <include>**/*.gif</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>edi/res</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>EdiGUI</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>EdiGUI</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

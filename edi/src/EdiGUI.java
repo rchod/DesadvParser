@@ -96,7 +96,17 @@ public class EdiGUI {
 		frame.setBounds(100, 100, 700, 700);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src\\EDI-Logo.gif"));
+		try {
+			File iconFile = PathUtils.resolveEdiSrcPath("EDI-Logo.gif");
+			if (iconFile.exists()) {
+				Image icon = ImageIO.read(iconFile);
+				if (icon != null) {
+					frame.setIconImage(icon);
+				}
+			}
+		} catch (Exception e) {
+			// Icon file not found, continue without icon
+		}
 		frame.setTitle("DESADV Parser");
 		
 		frame.getContentPane().add(jp1, BorderLayout.CENTER);
@@ -118,11 +128,12 @@ public class EdiGUI {
         		textArea.getHighlighter().removeAllHighlights();
         		result = "<html>";
         		scrollPane.removeAll();
-        		System.out.println("Vérification en cours");
+        		System.out.println("Vï¿½rification en cours");
         		
         		PrintWriter writer = null;
+				File tempFile = PathUtils.resolveEdiSrcPath("desadv.tmp");
 				try {
-					writer = new PrintWriter("src\\desadv.tmp", "UTF-8");
+					writer = new PrintWriter(tempFile, "UTF-8");
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -136,7 +147,7 @@ public class EdiGUI {
         		InputStreamReader inputReader = new InputStreamReader(System.in);
         		OutputStreamWriter outputWriter = new OutputStreamWriter(System.out);
 				EDItoXML edixml = new EDItoXML(inputReader, outputWriter);
-        		String[] s = {"src\\desadv.tmp"};
+        		String[] s = {tempFile.getAbsolutePath()};
 
         		DefaultHighlighter.DefaultHighlightPainter highlightPainter = 
         		        new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
@@ -177,7 +188,7 @@ public class EdiGUI {
 				        scrollPane.add(lblNewLabe2);
 				        
 				        if(errors.size()==0)
-				        	scrollPane.add(new JLabel("<html><span bgcolor='green'>Aucune erreure detectée</span>"));
+				        	scrollPane.add(new JLabel("<html><span bgcolor='green'>Aucune erreure detectï¿½e</span>"));
 					  
 				}catch (Exception e) {
 					// TODO Auto-generated catch block

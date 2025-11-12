@@ -178,10 +178,12 @@ public class EDItoXML {
                 return "EDItoXML [inputfile] [-o outputfile] [-n true|false] [-r true|false]";
             }
         };
-        String inputFileName = "src\\_desadv.tmp";
+        String inputFileName = null;
         if(args.length>0)
         	inputFileName = args[0];
-        String outputFileName = "src\\_desadv.xml";
+        else
+        	inputFileName = PathUtils.resolveEdiSrcPath("_desadv.tmp").getAbsolutePath();
+        String outputFileName = PathUtils.resolveEdiSrcPath("_desadv.xml").getAbsolutePath();
         boolean namespaceEnabled = "true".equals(commandLine.getOption("n"));
         boolean recover = "true".equals(commandLine.getOption("r"));
 

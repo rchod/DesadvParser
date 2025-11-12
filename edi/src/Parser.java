@@ -103,8 +103,10 @@ public class Parser {
         dbf.setCoalescing(putCDATAIntoText);
         dbf.setExpandEntityReferences(!createEntityRefs);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(new File("src\\_desadv.xml"));
-        Document ediMapping = db.parse(new File("src\\_base.xml"));
+        File desadvFile = PathUtils.resolveEdiSrcPath("_desadv.xml");
+        File baseFile = PathUtils.resolveEdiSrcPath("_base.xml");
+        Document doc = db.parse(desadvFile);
+        Document ediMapping = db.parse(baseFile);
         // end reading xml file
         
         mappingSegments = ediMapping.getChildNodes().item(0).getChildNodes();
@@ -120,26 +122,57 @@ public class Parser {
             String desadvDate = doc.getChildNodes().item(0).getChildNodes().item(0).getAttributes().getNamedItem("Date").getTextContent();
             String desadvTime = doc.getChildNodes().item(0).getChildNodes().item(0).getAttributes().getNamedItem("Time").getTextContent();
             
+            // Validate date format: YYMMDD (6 digits)
             if(desadvDate.length() != 6){
-            	//errorsLines.add(segCounter);
-            	errors.add(SSS+"[segment "+segCounter+"] the desadv's date format is incorrect, should be YYMMDD");
-            	//throw new Exception("[segment:"+segCounter+"]"+"the desadv's date format is incorrect, should be YYMMDD");
+            	errors.add(SSS+"[segment "+segCounter+"] DESADV date format is incorrect, should be YYMMDD (6 digits), found: "+desadvDate.length()+" digits");
+            } else {
+            	// Additional validation: check if date values are valid
+            	try {
+            		int year = Integer.parseInt(desadvDate.substring(0, 2));
+            		int month = Integer.parseInt(desadvDate.substring(2, 4));
+            		int day = Integer.parseInt(desadvDate.substring(4, 6));
+            		
+            		if(month < 1 || month > 12) {
+            			errors.add(SSS+"[segment "+segCounter+"] DESADV date has invalid month: "+month+" (should be 01-12)");
+            		}
+            		if(day < 1 || day > 31) {
+            			errors.add(SSS+"[segment "+segCounter+"] DESADV date has invalid day: "+day+" (should be 01-31)");
+            		}
+            	} catch(NumberFormatException e) {
+            		errors.add(SSS+"[segment "+segCounter+"] DESADV date contains non-numeric characters: "+desadvDate);
+            	}
             }
+            
+            // Validate time format: HHMM (4 digits)
             if(desadvTime.length() != 4){
-            	//errorsLines.add(segCounter);
-            	errors.add(SSS+"[segment "+segCounter+"] the desadv's time format is incorrect, should be HHMM");
-            	//throw new Exception("[segment:"+segCounter+"]"+"the desadv's time format is incorrect, should be HHMM");
+            	errors.add(SSS+"[segment "+segCounter+"] DESADV time format is incorrect, should be HHMM (4 digits), found: "+desadvTime.length()+" digits");
+            } else {
+            	// Additional validation: check if time values are valid
+            	try {
+            		int hour = Integer.parseInt(desadvTime.substring(0, 2));
+            		int minute = Integer.parseInt(desadvTime.substring(2, 4));
+            		
+            		if(hour < 0 || hour > 23) {
+            			errors.add(SSS+"[segment "+segCounter+"] DESADV time has invalid hour: "+hour+" (should be 00-23)");
+            		}
+            		if(minute < 0 || minute > 59) {
+            			errors.add(SSS+"[segment "+segCounter+"] DESADV time has invalid minute: "+minute+" (should be 00-59)");
+            		}
+            	} catch(NumberFormatException e) {
+            		errors.add(SSS+"[segment "+segCounter+"] DESADV time contains non-numeric characters: "+desadvTime);
+            	}
             }
             
+            // Validate that document date is not in the future
             Date today = new Date();
-            SimpleDateFormat formatter;
-            formatter = new SimpleDateFormat("yyMMdd");
-            Date desadvDateD = formatter.parse(desadvDate);
-            
-            if(desadvDateD.compareTo(today)==1){
-            	//errorsLines.add(segCounter);
-            	errors.add(SSS+"[segment "+segCounter+"] the desadv's date is greater than today's date");
-            	//throw new Exception("[segment:"+segCounter+"]"+"the desadv's date is greater than today's date");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+            try {
+            	Date desadvDateD = formatter.parse(desadvDate);
+            	if(desadvDateD.compareTo(today) > 0){
+            		errors.add(SSS+"[segment "+segCounter+"] DESADV date is in the future: "+desadvDate+" (today: "+formatter.format(today)+")");
+            	}
+            } catch(Exception e) {
+            	errors.add(SSS+"[segment "+segCounter+"] Failed to parse DESADV date: "+desadvDate+" - "+e.getMessage());
             }
             //output = formatter.parse(desadvDate); format(today);
            // System.out.println("****************** " + desadvDateD.compareTo(today));
@@ -150,47 +183,52 @@ public class Parser {
 	         Node transaction = group.getChildNodes().item(0);
 	         NodeList segments = group.getChildNodes().item(0).getChildNodes();
 	         
-	         // start check transaction
-	         if(!transaction.getAttributes().getNamedItem("DocType").getTextContent().equals("DESADV")){
-	        	 //errorsLines.add(segCounter);
-	        	 errors.add("[UNB] ERROR: DocType should be DESADV");
-	         }
-	         if(!transaction.getAttributes().getNamedItem("Version").getTextContent().equals("D")){
-	        	 //errorsLines.add(segCounter);
-	        	 errors.add("[UNB] ERROR: Version should be D");
-	         }
-	         if(!transaction.getAttributes().getNamedItem("Release").getTextContent().equals("96A")){
-	        	 //errorsLines.add(segCounter);
-	        	 errors.add("[UNB] ERROR: Release should be 96A");
-	         }
-	         if(!transaction.getAttributes().getNamedItem("Agency").getTextContent().equals("UN")){
-	        	 //errorsLines.add(segCounter);
-	        	 errors.add("[UNB] ERROR: Agency should be UN");
-	         }
-	         if(!transaction.getAttributes().getNamedItem("Association").getTextContent().equals("A01052") && !transaction.getAttributes().getNamedItem("Association").getTextContent().equals("A01051")){
-	        	 //errorsLines.add(segCounter);
-	        	 errors.add("[UNB] ERROR: Association should be A01052 or A01051");
-	         // end check transaction
-	         }
+         // Validate UNB (Interchange Header) segment attributes
+         // These are standard UN/EDIFACT validations
+         String docType = transaction.getAttributes().getNamedItem("DocType").getTextContent();
+         if(!docType.equals("DESADV")){
+        	 errors.add("[UNB] ERROR: Document type should be DESADV, found: "+docType);
+         }
+         
+         String version = transaction.getAttributes().getNamedItem("Version").getTextContent();
+         if(!version.equals("D")){
+        	 errors.add("[UNB] ERROR: Version should be D (DESADV), found: "+version);
+         }
+         
+         String release = transaction.getAttributes().getNamedItem("Release").getTextContent();
+         if(!release.equals("96A")){
+        	 errors.add("[UNB] ERROR: Release should be 96A, found: "+release);
+         }
+         
+         String agency = transaction.getAttributes().getNamedItem("Agency").getTextContent();
+         if(!agency.equals("UN")){
+        	 errors.add("[UNB] ERROR: Agency should be UN, found: "+agency);
+         }
+         
+         // Renault-specific: Association code validation
+         // Note: A01052 and A01051 are Renault-specific association codes
+         String association = transaction.getAttributes().getNamedItem("Association").getTextContent();
+         if(!association.equals("A01052") && !association.equals("A01051")){
+        	 errors.add("[UNB] ERROR: Association code should be A01052 or A01051 (Renault-specific), found: "+association);
+         }
 	         
-	         // check if receiver edi code is equal to renault edi code
-	         if(!receiver.getFirstChild().getAttributes().getNamedItem("Id").getTextContent().equals("1780129987")){
-	        	 //errorsLines.add(segCounter);
-	        	 errors.add(SSS+"[segment "+segCounter+"] ERROR: Renault EDI code is incorrect, should be 1780129987");
-	         	//throw new Exception("[segment:"+segCounter+"]"+"ERROR: Renault EDI code is incorrect, should be 1780129987");
-	         }
+         // Renault-specific validation: Check if receiver EDI code matches Renault's code
+         // Note: This is a Renault-specific requirement, not a general DESADV standard
+         String receiverId = receiver.getFirstChild().getAttributes().getNamedItem("Id").getTextContent();
+         if(!receiverId.equals("1780129987")){
+        	 errors.add(SSS+"[segment "+segCounter+"] ERROR: Receiver EDI code is incorrect, expected Renault code: 1780129987, found: "+receiverId);
+         }
 
-	         // check if receiver edi code is equal to renault edi code
-	         if(!receiver.getFirstChild().getAttributes().getNamedItem("Qual").getTextContent().isEmpty()){
-	        	 //errorsLines.add(segCounter);
-	        	 errors.add(SSS+"[segment "+segCounter+"]  Renault EDI code qualifiant is incorrect");
-	        	 //throw new Exception("[segment:"+segCounter+"]"+"ERROR: Renault EDI code qualifiant is incorrect");
-	         }
+         // Renault-specific: Receiver EDI code qualifier should be empty
+         String receiverQual = receiver.getFirstChild().getAttributes().getNamedItem("Qual").getTextContent();
+         if(!receiverQual.isEmpty()){
+        	 errors.add(SSS+"[segment "+segCounter+"] ERROR: Receiver EDI code qualifier should be empty for Renault, found: "+receiverQual);
+         }
 	         
 	         
 	         // verification de l'ordre des segments
 	         // initialisation de segsOrder 
-	         Scanner sc = new Scanner(new File("src\\_segments-ordre.txt"));
+	         Scanner sc = new Scanner(PathUtils.resolveEdiSrcPath("_segments-ordre.txt"));
 	         String line = null;
 			 while(sc.hasNext()){
 				if(line==null)
@@ -284,10 +322,11 @@ public class Parser {
   //#############################################################  
     private static void ediCheck(Node n) throws Exception {
     	
+    	// Null check - must use == not equals() to avoid NullPointerException
+    	if(n == null) return;
     	
     	out = System.out;
     	//out.println("#### start ediCheck ["+n.getNodeName()+"] ####");
-    	if(n.equals(null)) return;
     	if(Arrays.asList(segsWithoutQualifiant).contains(actualSeg))
     		SSS = '['+actualSeg+']';
     	else
@@ -300,27 +339,23 @@ public class Parser {
 			 SegQualifiant = getQualifiant(n);
 			 actualSeg = n.getAttributes().getNamedItem("Id").getTextContent();
 			 	 
-			 if(!Arrays.asList(segsWithoutQualifiant).contains(actualSeg))
+			 // Check if segment with qualifier is valid
+			 if(!Arrays.asList(segsWithoutQualifiant).contains(actualSeg)) {
 				if(!desadvSegsListP.contains(actualSeg+"+"+SegQualifiant)){
-					//errorsLines.add(segCounter);
-					errors.add(SSS+"[segment "+segCounter+"] Segment inconnue: "+actualSeg+"+"+SegQualifiant);
-					//throw new Exception("[segment:"+segCounter+"]"+"Segment inconnue: "+actualSeg+"+"+SegQualifiant); 
+					errors.add(SSS+"[segment "+segCounter+"] Unknown segment with qualifier: "+actualSeg+"+"+SegQualifiant);
 				}
-			// checking segments inconnues
-				if(!desadvSegsList.contains(actualSeg)){
-					//errorsLines.add(segCounter);
-					errors.add(SSS+"[segment "+segCounter+"] Segment inconnue: "+actualSeg);
-					//throw new Exception("[segment:"+segCounter+"]"+"Segment inconnue: "+actualSeg);
-				}
-				
-				
-			 // checking qualifiants inconnues
-				actualElmContent = n.getTextContent();
-			    if(!desadvSegsListP.contains(actualSeg+"+"+SegQualifiant) && !desadvSegsListVar.contains(actualSeg) && !Arrays.asList(segsWithoutQualifiant).contains(actualSeg)){
-			    	//errorsLines.add(segCounter);
-			    	errors.add(SSS+"[segment "+segCounter+"] Qualifiant inconnue: "+actualSeg+"+"+SegQualifiant);
-				  //throw new Exception("[segment:"+segCounter+"]"+"Qualifiant inconnue: "+actualSeg+"+"+SegQualifiant);
-			    }
+			 }
+			 
+			// Check if segment type is valid
+			if(!desadvSegsList.contains(actualSeg)){
+				errors.add(SSS+"[segment "+segCounter+"] Unknown segment type: "+actualSeg);
+			}
+			
+			// Check if qualifier is valid for this segment
+			actualElmContent = n.getTextContent();
+			if(!desadvSegsListP.contains(actualSeg+"+"+SegQualifiant) && !desadvSegsListVar.contains(actualSeg) && !Arrays.asList(segsWithoutQualifiant).contains(actualSeg)){
+				errors.add(SSS+"[segment "+segCounter+"] Unknown qualifier for segment: "+actualSeg+"+"+SegQualifiant);
+			}
 				
 			// start checking required segments
 			out.println("remove "+actualSeg+"+"+SegQualifiant);
@@ -465,22 +500,22 @@ public class Parser {
 				if(dtm132 != null && dtm11 != null)
 					if(Long.parseLong(dtm132) <= Long.parseLong(dtm11)){
 						//errorsLines.add(segCounter);
-						errors.add(SSS+"[segment "+segCounter+"] DTM+132  doit etre superieur à DTM+11");
-						//throw new Exception("[segment:"+segCounter+"]"+"DTM+132 ne doit pas etre inferieur à DTM+11");
+						errors.add(SSS+"[segment "+segCounter+"] DTM+132  doit etre superieur ï¿½ DTM+11");
+						//throw new Exception("[segment:"+segCounter+"]"+"DTM+132 ne doit pas etre inferieur ï¿½ DTM+11");
 					}
 						
 				if(dtm137 != null && dtm11 != null)
 					if(Long.parseLong(dtm11) < Long.parseLong(dtm137)){
 						//errorsLines.add(segCounter);
-						errors.add(SSS+"[segment "+segCounter+"] DTM+11  doit etre superieur à DTM+137");
-						//throw new Exception("[segment:"+segCounter+"]"+"DTM+11 ne doit pas etre inferieur à DTM+137");
+						errors.add(SSS+"[segment "+segCounter+"] DTM+11  doit etre superieur ï¿½ DTM+137");
+						//throw new Exception("[segment:"+segCounter+"]"+"DTM+11 ne doit pas etre inferieur ï¿½ DTM+137");
 
 					}
 				if(dtm137 != null && dtm132 != null)
 					if(Long.parseLong(dtm132) <= Long.parseLong(dtm137)){
 						//errorsLines.add(segCounter);
-						errors.add(SSS+"[segment "+segCounter+"] DTM+132  doit etre superieur à DTM+137");
-						//throw new Exception("[segment:"+segCounter+"]"+"DTM+132 ne doit pas etre inferieur à DTM+137");
+						errors.add(SSS+"[segment "+segCounter+"] DTM+132  doit etre superieur ï¿½ DTM+137");
+						//throw new Exception("[segment:"+segCounter+"]"+"DTM+132 ne doit pas etre inferieur ï¿½ DTM+137");
 
 					}
 				
