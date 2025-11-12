@@ -57,6 +57,7 @@ public class Parser {
     private static String dtm132 = null;
     private static String dtm11  = null;
     private static String dtm137 = null;
+    private static boolean dtmRelationshipsChecked = false;
     private static String nadCzCode = null;
     private static String rffAdeCode = null;
     private static int lineCounter = 0;
@@ -70,8 +71,19 @@ public class Parser {
         this.out = out;
     }
 
-    public static void main(String[] args) throws Exception {
+    /**
+     * Reset all static variables to ensure proper test isolation
+     * Made public for test access
+     */
+    public static void resetStaticVariables() {
+    	// Reset counters
     	segCounter = 2;
+    	girCounter = 0;
+        pac = 0;
+        qty52 = 0;
+        lineCounter = 0;
+        
+        // Reset collections
     	errors.clear();
     	errorsLines.clear();
     	requiredSegments.clear();
@@ -79,9 +91,38 @@ public class Parser {
     	desadvSegsListVar.clear();
     	desadvSegsListP.clear();
     	desadvSegsList.clear();
-    	segCounter = 2;
-    	girCounter = 0;
-        pac = 0;
+    	segsOrder.clear();
+    	segs.clear();
+    	repetitivitySegs.clear();
+        
+        // Reset DTM date variables
+        dtm132 = null;
+        dtm137 = null;
+        dtm11 = null;
+        dtmRelationshipsChecked = false;
+        
+        // Reset other state variables
+        previousSeg = null;
+        actualSeg = null;
+        previousElm = null;
+        actualElm = null;
+        previousQualifiant = null;
+        actualQualifiant = null;
+        previousElmContent = null;
+        actualElmContent = null;
+        mappingElm = null;
+        mappingSeg = null;
+        isComposite = "no";
+        SegQualifiant = null;
+        nadCzCode = null;
+        rffAdeCode = null;
+        SSS = "";
+        mappingSegments = null;
+    }
+    
+    public static void main(String[] args) throws Exception {
+    	// Reset all static variables at the start of each parse
+    	resetStaticVariables();
     	
     	
         boolean ignoreWhitespace = false;
@@ -97,6 +138,7 @@ public class Parser {
         
   
         // start reading xml file 
+        // Create a new DocumentBuilderFactory for each parse to avoid caching issues
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setIgnoringComments(ignoreComments);
         dbf.setIgnoringElementContentWhitespace(ignoreWhitespace);
@@ -105,7 +147,36 @@ public class Parser {
         DocumentBuilder db = dbf.newDocumentBuilder();
         File desadvFile = PathUtils.resolveEdiSrcPath("_desadv.xml");
         File baseFile = PathUtils.resolveEdiSrcPath("_base.xml");
-        Document doc = db.parse(desadvFile);
+        
+        System.out.println("DEBUG Parser: Reading XML from: " + desadvFile.getAbsolutePath());
+        System.out.println("DEBUG Parser: XML file exists: " + desadvFile.exists());
+        if (desadvFile.exists()) {
+            System.out.println("DEBUG Parser: XML file size: " + desadvFile.length() + " bytes");
+            System.out.println("DEBUG Parser: XML file last modified: " + new java.util.Date(desadvFile.lastModified()));
+            
+            // Verify XML content before parsing - extract DTM+132 date
+            try {
+                String xmlContent = new String(java.nio.file.Files.readAllBytes(desadvFile.toPath()), "UTF-8");
+                int dtm132Index = xmlContent.indexOf("<subelement Sequence=\"1\">132</subelement>");
+                if (dtm132Index > 0) {
+                    int dateStart = xmlContent.indexOf("<subelement Sequence=\"2\">", dtm132Index);
+                    if (dateStart > 0) {
+                        int dateEnd = xmlContent.indexOf("</subelement>", dateStart);
+                        if (dateEnd > 0) {
+                            String dateValue = xmlContent.substring(dateStart + 26, dateEnd);
+                            System.out.println("DEBUG Parser: XML DTM+132 date value before parsing: '" + dateValue + "'");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("DEBUG Parser: Could not read XML file for verification: " + e.getMessage());
+            }
+        }
+        
+        // Use InputSource with explicit file to avoid caching issues
+        org.xml.sax.InputSource is = new org.xml.sax.InputSource(new java.io.FileInputStream(desadvFile));
+        is.setSystemId(desadvFile.toURI().toString());
+        Document doc = db.parse(is);
         Document ediMapping = db.parse(baseFile);
         // end reading xml file
         
@@ -117,7 +188,14 @@ public class Parser {
 
         
         // ******************* start interchanges loop *****************
+        System.out.println("DEBUG: Total interchanges: " + interchanges.getLength());
         for(int i=0;i<interchanges.getLength();i++){
+        	// Reset DTM date variables for each interchange
+        	System.out.println("DEBUG: Processing interchange " + (i+1) + ", resetting DTM dates");
+        	dtm132 = null;
+        	dtm137 = null;
+        	dtm11 = null;
+        	dtmRelationshipsChecked = false;
         	
             String desadvDate = doc.getChildNodes().item(0).getChildNodes().item(0).getAttributes().getNamedItem("Date").getTextContent();
             String desadvTime = doc.getChildNodes().item(0).getChildNodes().item(0).getAttributes().getNamedItem("Time").getTextContent();
@@ -368,9 +446,12 @@ public class Parser {
 				mappingSeg = getMappingAttrsSeg(n, SegQualifiant);				
 			
 			}else{
-				
-				mappingSeg = getMappingNode(n,"segment","Id");					
-				
+				// For segments like MEA and LOC, we need to match based on element content too
+				if(actualSeg.equals("MEA") || actualSeg.equals("LOC")){
+					mappingSeg = getMappingNodeByContent(n, actualSeg);
+				} else {
+					mappingSeg = getMappingNode(n,"segment","Id");
+				}
 			}
 
 			if(mappingSeg==null){
@@ -484,52 +565,119 @@ public class Parser {
 			//************* end check GIR segs ****************
 						
 			 
-			 // check DTM segments  
-			 if(actualSeg.equals("DTM")){
-
-				if(SegQualifiant.equals("11")) {
-					dtm11 = getDTM(n);
-				}
-				
-				if(SegQualifiant.equals("132")) {
-					dtm132 = getDTM(n);
-				}
-				
-				if(SegQualifiant.equals("137")) {
-					dtm137 = getDTM(n);
-				}
-				
-				if(dtm132 != null && dtm11 != null)
-					if(Long.parseLong(dtm132) <= Long.parseLong(dtm11)){
-						//errorsLines.add(segCounter);
-						errors.add(SSS+"[segment "+segCounter+"] DTM+132  doit etre superieur � DTM+11");
-						//throw new Exception("[segment:"+segCounter+"]"+"DTM+132 ne doit pas etre inferieur � DTM+11");
-					}
-						
-				if(dtm137 != null && dtm11 != null)
-					if(Long.parseLong(dtm11) < Long.parseLong(dtm137)){
-						//errorsLines.add(segCounter);
-						errors.add(SSS+"[segment "+segCounter+"] DTM+11  doit etre superieur � DTM+137");
-						//throw new Exception("[segment:"+segCounter+"]"+"DTM+11 ne doit pas etre inferieur � DTM+137");
-
-					}
-				if(dtm137 != null && dtm132 != null)
-					if(Long.parseLong(dtm132) <= Long.parseLong(dtm137)){
-						//errorsLines.add(segCounter);
-						errors.add(SSS+"[segment "+segCounter+"] DTM+132  doit etre superieur � DTM+137");
-						//throw new Exception("[segment:"+segCounter+"]"+"DTM+132 ne doit pas etre inferieur � DTM+137");
-
-					}
-				
-			 }
-			 // end checking DTM segments 
-			 
+		 // check DTM segments  
+		 if(actualSeg.equals("DTM")){
+			String dtmDate = getDTM(n);
+			String dtmFormat = getDTMFormat(n); // Get format code (102, 203, etc.)
 			
-			// start checking segments order
-			for(int h=0;h<segsOrder.size();h++){
-				if(!Arrays.asList(segsWithoutQualifiant).contains(actualSeg)){
-					if(segsOrder.get(h).get(0).get(0).equals(actualSeg+"+"+SegQualifiant)){
-						if(!Arrays.asList(segsWithoutQualifiant).contains(previousSeg)){
+			// Validate DTM date format and values
+			if(dtmDate != null && dtmDate.length() >= 6) {
+				try {
+					int month, day;
+					
+					// Parse date according to format code
+					if("203".equals(dtmFormat) || dtmDate.length() == 8) {
+						// CCYYMMDD format (8 digits) - format code 203
+						month = Integer.parseInt(dtmDate.substring(4, 6));
+						day = Integer.parseInt(dtmDate.substring(6, 8));
+					} else {
+						// YYMMDD format (6 digits) - format code 102
+						month = Integer.parseInt(dtmDate.substring(2, 4));
+						day = Integer.parseInt(dtmDate.substring(4, 6));
+					}
+					
+					if(month < 1 || month > 12) {
+						errors.add(SSS+"[segment "+segCounter+"] DTM+"+SegQualifiant+" has invalid month: "+month+" (should be 01-12)");
+					}
+					if(day < 1 || day > 31) {
+						errors.add(SSS+"[segment "+segCounter+"] DTM+"+SegQualifiant+" has invalid day: "+day+" (should be 01-31)");
+					}
+					
+					// Validate time if present (format: CCYYMMDDHHMM or YYMMDDHHMM)
+					if(dtmDate.length() >= 10) {
+						int timeStart = ("203".equals(dtmFormat) || dtmDate.length() == 12) ? 8 : 6;
+						String timePart = dtmDate.substring(timeStart, timeStart + 4); // HHMM
+						int hour = Integer.parseInt(timePart.substring(0, 2));
+						int minute = Integer.parseInt(timePart.substring(2, 4));
+						
+						if(hour < 0 || hour > 23) {
+							errors.add(SSS+"[segment "+segCounter+"] DTM+"+SegQualifiant+" has invalid hour: "+hour+" (should be 00-23)");
+						}
+						if(minute < 0 || minute > 59) {
+							errors.add(SSS+"[segment "+segCounter+"] DTM+"+SegQualifiant+" has invalid minute: "+minute+" (should be 00-59)");
+						}
+					}
+				} catch(NumberFormatException e) {
+					errors.add(SSS+"[segment "+segCounter+"] DTM+"+SegQualifiant+" contains non-numeric characters: "+dtmDate);
+				} catch(StringIndexOutOfBoundsException e) {
+					errors.add(SSS+"[segment "+segCounter+"] DTM+"+SegQualifiant+" date format is incorrect: "+dtmDate);
+				}
+			}
+
+		if(SegQualifiant.equals("11")) {
+			System.out.println("DEBUG: Storing DTM+11 date: '" + dtmDate + "' from segment " + segCounter);
+			dtm11 = dtmDate;
+		}
+		
+		if(SegQualifiant.equals("132")) {
+			System.out.println("DEBUG: Storing DTM+132 date: '" + dtmDate + "' from segment " + segCounter);
+			dtm132 = dtmDate;
+		}
+		
+		if(SegQualifiant.equals("137")) {
+			System.out.println("DEBUG: Storing DTM+137 date: '" + dtmDate + "' from segment " + segCounter);
+			dtm137 = dtmDate;
+		}
+				
+		// Only check date relationships once after all three dates are available
+		// This prevents false errors when dates are processed in different orders
+		if(!dtmRelationshipsChecked && dtm132 != null && dtm137 != null && dtm11 != null){
+			// Trim any whitespace from dates
+			dtm132 = dtm132.trim();
+			dtm137 = dtm137.trim();
+			dtm11 = dtm11.trim();
+			
+			System.out.println("DEBUG: Checking date relationships at segment " + segCounter + ":");
+			System.out.println("  dtm132: '" + dtm132 + "'");
+			System.out.println("  dtm137: '" + dtm137 + "'");
+			System.out.println("  dtm11:  '" + dtm11 + "'");
+			
+			// Check: DTM+132 (document date) <= DTM+137 (despatch date) <= DTM+11 (delivery date)
+			long dtm132Long = Long.parseLong(dtm132);
+			long dtm137Long = Long.parseLong(dtm137);
+			long dtm11Long = Long.parseLong(dtm11);
+			
+			boolean error132_137 = dtm132Long > dtm137Long;
+			boolean error137_11 = dtm137Long > dtm11Long;
+			boolean error132_11 = dtm132Long > dtm11Long;
+			
+			System.out.println("  dtm132 > dtm137: " + error132_137);
+			System.out.println("  dtm137 > dtm11:  " + error137_11);
+			System.out.println("  dtm132 > dtm11:  " + error132_11);
+			
+			if(error132_137){
+				System.out.println("  ERROR: Adding dtm132 > dtm137 error");
+				errors.add(SSS+"[segment "+segCounter+"] DTM+132 (document date) must be less than or equal to DTM+137 (despatch date)");
+			}
+			if(error137_11){
+				System.out.println("  ERROR: Adding dtm137 > dtm11 error");
+				errors.add(SSS+"[segment "+segCounter+"] DTM+137 (despatch date) must be less than or equal to DTM+11 (delivery date)");
+			}
+			if(error132_11){
+				System.out.println("  ERROR: Adding dtm132 > dtm11 error");
+				errors.add(SSS+"[segment "+segCounter+"] DTM+132 (document date) must be less than or equal to DTM+11 (delivery date)");
+			}
+			dtmRelationshipsChecked = true; // Mark as checked to prevent duplicate checks
+		}
+		 }
+		 // end checking DTM segments 
+		 
+		
+		// start checking segments order
+		for(int h=0;h<segsOrder.size();h++){
+			if(!Arrays.asList(segsWithoutQualifiant).contains(actualSeg)){
+				if(segsOrder.get(h).get(0).get(0).equals(actualSeg+"+"+SegQualifiant)){
+					if(!Arrays.asList(segsWithoutQualifiant).contains(previousSeg)){
 							if(!segsOrder.get(h).get(1).contains(previousSeg+"+"+previousQualifiant)){
 								//errorsLines.add(segCounter);
 								errors.add(SSS+"[segment "+segCounter+"] order Exception ! "+actualSeg+"+"+SegQualifiant+" does not come after "+previousSeg+"+"+previousQualifiant);
@@ -864,6 +1012,96 @@ public class Parser {
     
     }
     
+    //############################ getMappingNodeByContent() ##########################
+    // Gets mapping for segments that need to match by element content (e.g., MEA+AAY with different MEA02, LOC with different LOC01)
+    private static Node getMappingNodeByContent(Node n, String segmentId){
+    	String atr = n.getAttributes().getNamedItem("Id").getTextContent();
+    	
+    	// Get the actual element content to match
+    	String elementContent = null;
+    	if(segmentId.equals("MEA")){
+    		// For MEA, check MEA02 subelement 1 (the second element's first subelement)
+    		NodeList elements = n.getChildNodes();
+    		for(int i = 0; i < elements.getLength(); i++){
+    			Node elem = elements.item(i);
+    			if(elem.getNodeName().equals("element")){
+    				String elemId = elem.getAttributes().getNamedItem("Id").getTextContent();
+    				if("MEA02".equals(elemId) && elem.hasChildNodes()){
+    					NodeList subelements = elem.getChildNodes();
+    					for(int j = 0; j < subelements.getLength(); j++){
+    						Node subelem = subelements.item(j);
+    						if(subelem.getNodeName().equals("subelement")){
+    							String seq = subelem.getAttributes().getNamedItem("Sequence").getTextContent();
+    							if("1".equals(seq)){
+    								elementContent = subelem.getTextContent();
+    								break;
+    							}
+    						}
+    					}
+    					break;
+    				}
+    			}
+    		}
+    	} else if(segmentId.equals("LOC")){
+    		// For LOC, check LOC01 (the first element)
+    		NodeList elements = n.getChildNodes();
+    		for(int i = 0; i < elements.getLength(); i++){
+    			Node elem = elements.item(i);
+    			if(elem.getNodeName().equals("element")){
+    				String elemId = elem.getAttributes().getNamedItem("Id").getTextContent();
+    				if("LOC01".equals(elemId)){
+    					elementContent = elem.getTextContent();
+    					break;
+    				}
+    			}
+    		}
+    	}
+    	
+    	// Now find the matching mapping
+    	for(int i=0;i<mappingSegments.getLength();i++){
+    		Node tmpNode = mappingSegments.item(i);
+    		if(tmpNode.getNodeName().equals("segment")){
+    			if(tmpNode.getAttributes().getNamedItem("Id").getTextContent().equals(atr)){
+    				// Check if element content matches
+    				if(elementContent != null){
+    					NodeList mappingElements = tmpNode.getChildNodes();
+    					for(int j = 0; j < mappingElements.getLength(); j++){
+    						Node mappingElem = mappingElements.item(j);
+    						if(mappingElem.getNodeName().equals("element")){
+    							String elemId = mappingElem.getAttributes().getNamedItem("Id").getTextContent();
+    							if(segmentId.equals("MEA") && "MEA02".equals(elemId)){
+    								// Check MEA02 subelement 1
+    								if(mappingElem.hasChildNodes()){
+    									NodeList subelements = mappingElem.getChildNodes();
+    									for(int k = 0; k < subelements.getLength(); k++){
+    										Node subelem = subelements.item(k);
+    										if(subelem.getNodeName().equals("subelement")){
+    											String seq = subelem.getAttributes().getNamedItem("Sequence").getTextContent();
+    											if("1".equals(seq) && elementContent.equals(subelem.getTextContent())){
+    												return tmpNode;
+    											}
+    										}
+    									}
+    								}
+    							} else if(segmentId.equals("LOC") && "LOC01".equals(elemId)){
+    								// Check LOC01 content
+    								if(elementContent.equals(mappingElem.getTextContent())){
+    									return tmpNode;
+    								}
+    							}
+    						}
+    					}
+    				} else {
+    					// If we couldn't extract element content, return first match (fallback)
+    					return tmpNode;
+    				}
+    			}
+    		}
+    	}
+    	
+    	return null;
+    }
+    
     
     //############################ Node getMappingNode ##########################
     private static Node getMappingNode(Node n, String nodeType, String attr, String content){
@@ -888,6 +1126,7 @@ public class Parser {
 //    	System.out.println("[segment] starting search for mapping info of "+atr);
 //    	System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
     	
+    	List<Node> matchingNodes = new ArrayList<Node>();
     	for(int i=0;i<mappingSegments.getLength();i++){
     		Node tmpNode = mappingSegments.item(i);
     		if(tmpNode.getNodeName().equals("segment")){
@@ -895,10 +1134,10 @@ public class Parser {
     				if(notUniqueSegsList.contains(actualSeg)){
     					if(tmpNode.getChildNodes().item(1).hasChildNodes() && tmpNode.getChildNodes().item(1).getChildNodes().getLength()>1){
     						if(tmpNode.getChildNodes().item(1).getChildNodes().item(1).getTextContent().equals(qualifiant))
-    							return tmpNode;
+    							matchingNodes.add(tmpNode);
     					}else{
     						if(tmpNode.getChildNodes().item(1).getTextContent().equals(qualifiant))
-    							return tmpNode;
+    							matchingNodes.add(tmpNode);
     					}
     				}else{
     					
@@ -907,6 +1146,75 @@ public class Parser {
     				}
     			}
     		}
+    	}
+    	
+    	// If multiple matches found (e.g., MEA+AAY with different MEA02), match by element content
+    	if(matchingNodes.size() > 1 && actualSeg.equals("MEA")){
+    		// Extract MEA02 content from the actual segment (can be simple element or composite)
+    		String elementContent = null;
+    		NodeList elements = n.getChildNodes();
+    		for(int i = 0; i < elements.getLength(); i++){
+    			Node elem = elements.item(i);
+    			if(elem.getNodeName().equals("element")){
+    				String elemId = elem.getAttributes().getNamedItem("Id").getTextContent();
+    				if("MEA02".equals(elemId)){
+    					// Check if it's a composite element with subelements
+    					if(elem.hasChildNodes()){
+    						boolean foundSubelement = false;
+    						NodeList subelements = elem.getChildNodes();
+    						for(int j = 0; j < subelements.getLength(); j++){
+    							Node subelem = subelements.item(j);
+    							if(subelem.getNodeName().equals("subelement")){
+    								String seq = subelem.getAttributes().getNamedItem("Sequence").getTextContent();
+    								if("1".equals(seq)){
+    									elementContent = subelem.getTextContent();
+    									foundSubelement = true;
+    									break;
+    								}
+    							}
+    						}
+    						// If no subelement found, it might be a simple element
+    						if(!foundSubelement){
+    							elementContent = elem.getTextContent().trim();
+    						}
+    					} else {
+    						// Simple element - get text content directly
+    						elementContent = elem.getTextContent().trim();
+    					}
+    					break;
+    				}
+    			}
+    		}
+    		
+    		// Find matching mapping by MEA02 subelement 1
+    		if(elementContent != null){
+    			for(Node tmpNode : matchingNodes){
+    				NodeList mappingElements = tmpNode.getChildNodes();
+    				for(int j = 0; j < mappingElements.getLength(); j++){
+    					Node mappingElem = mappingElements.item(j);
+    					if(mappingElem.getNodeName().equals("element")){
+    						String elemId = mappingElem.getAttributes().getNamedItem("Id").getTextContent();
+    						if("MEA02".equals(elemId) && mappingElem.hasChildNodes()){
+    							NodeList subelements = mappingElem.getChildNodes();
+    							for(int k = 0; k < subelements.getLength(); k++){
+    								Node subelem = subelements.item(k);
+    								if(subelem.getNodeName().equals("subelement")){
+    									String seq = subelem.getAttributes().getNamedItem("Sequence").getTextContent();
+    									if("1".equals(seq) && elementContent.equals(subelem.getTextContent())){
+    										return tmpNode;
+    									}
+    								}
+    							}
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}
+    	
+    	// Return first match if no content-based matching or single match
+    	if(matchingNodes.size() > 0){
+    		return matchingNodes.get(0);
     	}
     	
 		return null;
@@ -1003,14 +1311,49 @@ public class Parser {
     	
     }
     //##################### getDTM(Node n) ############################*
+    // Extracts the date value from DTM segment (subelement Sequence="2")
     private static String getDTM(Node n){
-		
+		Node firstElement = n.getFirstChild();
+		if(firstElement != null && firstElement.hasChildNodes()){
+			NodeList subelements = firstElement.getChildNodes();
+			// Date value is in subelement Sequence="2"
+			for(int i = 0; i < subelements.getLength(); i++){
+				Node subelem = subelements.item(i);
+				if(subelem.getNodeName().equals("subelement")){
+					String seq = subelem.getAttributes().getNamedItem("Sequence").getTextContent();
+					if("2".equals(seq)){
+						return subelem.getTextContent();
+					}
+				}
+			}
+		}
+		// Fallback to old method if structure is different
 		if(n.getFirstChild().hasChildNodes()){
 		    return n.getFirstChild().getChildNodes().item(1).getTextContent();
 		}else{
 			return n.getChildNodes().item(1).getTextContent();
 		}
     	
+    }
+    
+    //##################### getDTMFormat(Node n) ############################*
+    // Gets the date format code (102, 203, etc.) from DTM segment
+    private static String getDTMFormat(Node n){
+		Node firstElement = n.getFirstChild();
+		if(firstElement != null && firstElement.hasChildNodes()){
+			NodeList subelements = firstElement.getChildNodes();
+			// Format code is in the 3rd subelement (Sequence="3")
+			for(int i = 0; i < subelements.getLength(); i++){
+				Node subelem = subelements.item(i);
+				if(subelem.getNodeName().equals("subelement")){
+					String seq = subelem.getAttributes().getNamedItem("Sequence").getTextContent();
+					if("3".equals(seq)){
+						return subelem.getTextContent();
+					}
+				}
+			}
+		}
+		return "102"; // Default to YYMMDD format
     }
     //##################### getElmContent(Node n) ############################*
     private static String getElmContent(Node n,int i){

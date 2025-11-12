@@ -372,7 +372,7 @@
 <segment Id="GIR" required="1" repetivity="100">
 <element Id="GIR01" required="1" length="3" format="an">3</element>
 <element Id="GIR02" Composite="yes">
-<subelement Sequence="1" required="1" length="35" format="an">REGEX:[A-Z]?[0-9]{9}</subelement>
+<subelement Sequence="1" required="1" length="35" format="an">REGEX:[A-Z]?[0-9]{9,10}</subelement>
 <subelement Sequence="2" required="0" length="3" format="an">REGEX:ML|BU|BX|AL</subelement>
 <subelement Sequence="3" required="0" length="3" format="an"></subelement>
 </element>
