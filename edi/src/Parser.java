@@ -377,6 +377,8 @@ public class Parser {
 				//errorsLines.add(segCounter);
 				errors.add(SSS+"[segment "+segCounter+"] mapping info error! is "+actualSeg+"+"+SegQualifiant+" a valid segment?");
 				//throw new Exception("[segment:"+segCounter+"]"+"mapping info error! is "+actualSeg+"+"+SegQualifiant+" a valid segment?");
+				// Skip further processing for this segment if mapping is not found
+				return;
 			}
 			
 			//************ checking repetitivity

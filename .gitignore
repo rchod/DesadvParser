@@ -28,7 +28,20 @@ lib/*.jar
 
 # Temporary files
 *.tmp
+*.temp
 *.log
+*.bak
+*.swp
+*.swo
+*~
+._*
 edi/src/desadv.tmp
 edi/src/_desadv.xml
+edi/src/_desadv.tmp
+
+# Temporary directories
+tmp/
+temp/
+*.cache/
+.cache/
 
