@@ -34,8 +34,9 @@
              
              To build and run this project:
              1. Download edireader-4.7.3.jar from BerryWorks (https://www.berryworks.com/)
-             2. Create the lib/ directory: mkdir -p lib
-             3. Place edireader-4.7.3.jar in the lib/ directory
+             2. Place it in the lib/ directory
+             3. Run: ./install-dependency.sh (or install-dependency.bat on Windows)
+                This will install it to your local Maven repository
              4. Then run: mvn clean compile
              
              See SETUP.md for detailed instructions.
@@ -44,9 +45,6 @@
             <groupId>com.berryworks</groupId>
             <artifactId>edireader</artifactId>
             <version>4.7.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/edireader-4.7.3.jar</systemPath>
-            <optional>false</optional>
         </dependency>
     </dependencies>
 

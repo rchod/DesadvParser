@@ -33,29 +33,29 @@ The library is not available in public Maven repositories. You must:
    cp /path/to/edireader-4.7.3.jar lib/
    ```
 
-4. **Verify the file is in place**:
+4. **Install the library to your local Maven repository**:
    ```bash
-   ls -la lib/edireader-4.7.3.jar
+   ./install-dependency.sh    # On Linux/Mac
+   install-dependency.bat     # On Windows
+   ```
+   
+   Or manually:
+   ```bash
+   mvn install:install-file \
+     -Dfile=lib/edireader-4.7.3.jar \
+     -DgroupId=com.berryworks \
+     -DartifactId=edireader \
+     -Dversion=4.7.3 \
+     -Dpackaging=jar \
+     -DgeneratePom=true
    ```
 
-The Maven build will automatically use it as a system dependency.
-
-### Alternative: Install to Local Maven Repository
-
-If you prefer to use Maven's local repository instead of system scope:
-
-```bash
-mvn install:install-file \
-  -Dfile=lib/edireader-4.7.3.jar \
-  -DgroupId=com.berryworks \
-  -DartifactId=edireader \
-  -Dversion=4.7.3 \
-  -Dpackaging=jar
-```
-
-Then update `pom.xml` to remove the `<scope>system</scope>` and `<systemPath>` elements, and change to a regular dependency.
+5. **Verify the installation**:
+   The library is now installed in your local Maven repository and will be used automatically by Maven.
 
 ## Building the Project
+
+**Important:** Make sure you've installed the EDIReader library to your local Maven repository first (see above).
 
 ```bash
 mvn clean compile
